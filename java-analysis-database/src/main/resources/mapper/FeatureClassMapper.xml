@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.ailurus.mapper.FeatureClassMapper">
+  <resultMap id="BaseResultMap" type="pers.ailurus.model.FeatureClass">
+    <!--@mbg.generated-->
+    <!--@Table feature_class-->
+    <id column="md5" jdbcType="VARCHAR" property="md5" />
+    <result column="modifier" jdbcType="INTEGER" property="modifier" />
+    <result column="interface_num" jdbcType="INTEGER" property="interfaceNum" />
+    <result column="has_super_class" jdbcType="INTEGER" property="hasSuperClass" />
+    <result column="field_num" jdbcType="INTEGER" property="fieldNum" />
+    <result column="method_num" jdbcType="INTEGER" property="methodNum" />
+    <result column="dep_class_num" jdbcType="INTEGER" property="depClassNum" />
+    <result column="be_dep_num" jdbcType="INTEGER" property="beDepNum" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    md5, modifier, interface_num, has_super_class, field_num, method_num, dep_class_num, 
+    be_dep_num
+  </sql>
+</mapper>

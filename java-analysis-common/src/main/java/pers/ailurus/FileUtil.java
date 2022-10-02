@@ -3,6 +3,9 @@ package pers.ailurus;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 /**
  * 文件工具
@@ -19,7 +22,10 @@ public class FileUtil {
      * @return {@code String}
      */
     public static String getFileMd5(String filePath) throws IOException {
-        return DigestUtils.md5Hex(new FileInputStream(filePath));
+        InputStream inputStream = new FileInputStream(filePath);
+        String md5 =  DigestUtils.md5Hex(inputStream);
+        inputStream.close();
+        return md5;
     }
 
     /**
@@ -32,9 +38,12 @@ public class FileUtil {
      */
     public static boolean extractJarFile(String filePath, String target) throws RuntimeException {
         StringBuilder sb = new StringBuilder();
+
+//        sb.append("/usr/bin/7z x -y \"").append(filePath).append("\" -o\"").append(target).append("\"");
         sb.append("7z x -y \"").append(filePath).append("\" -o\"").append(target).append("\"");
         try {
-            Process process = Runtime.getRuntime().exec(sb.toString());
+            Process process = Runtime.getRuntime().exec(new String[]{"sh", "-c", sb.toString()});
+//            Process process = Runtime.getRuntime().exec(sb.toString());
             process.waitFor();
             return true;
         } catch (IOException | InterruptedException e) {
@@ -69,29 +78,6 @@ public class FileUtil {
         return filePath.substring(0, filePath.length() - 4);
     }
 
-    /**
-     * 保存字符串到目标文件
-     *
-     * @param filePath 文件路径
-     * @param content  内容
-     * @return boolean
-     */
-    public static boolean save2File(String filePath, String content) {
-        if (content == null) {
-            return false;
-        }
-        if (!deleteAndCreateFile(filePath)) {
-            return false;
-        }
-        try (PrintWriter out = new PrintWriter(filePath)) {
-            out.println(content);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
 
     /**
      * 删除并创建文件
@@ -118,4 +104,34 @@ public class FileUtil {
         }
         return true;
     }
+
+    public static List<String[]> readCSVFile(String filePath) throws IOException {
+        // 创建 reader
+        return Files.readAllLines(Paths.get(filePath)).stream().map(s -> s.split(",")).toList();
+    }
+
+    public static void deleteFile(String filePath) {
+        File file = new File(filePath);
+        if (file.exists()) {
+            if (!file.delete()) {
+                System.out.println(filePath);
+            }
+        }
+    }
+
+    public static void deleteFolder(String filePath) {
+        File file = new File(filePath);
+        if (file.exists()) {
+            File[] files = file.listFiles();
+            for (File f : files) {
+                if (f.isDirectory()) {
+                    deleteFolder(f.getAbsolutePath());
+                } else {
+                    deleteFile(f.getAbsolutePath());
+                }
+            }
+            deleteFile(file.getAbsolutePath());
+        }
+    }
+
 }

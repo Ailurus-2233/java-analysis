@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>feature_extractor</artifactId>
+    <artifactId>java-analysis-extractor</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -31,7 +31,7 @@
         </dependency>
         <dependency>
             <groupId>pers.ailurus</groupId>
-            <artifactId>common</artifactId>
+            <artifactId>java-analysis-common</artifactId>
             <version>1.0.0</version>
         </dependency>
     </dependencies>

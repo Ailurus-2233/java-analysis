@@ -1,7 +1,9 @@
 package pers.ailurus.model;
 
+import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -24,5 +26,6 @@ public class AnalysisClass {
     private double importance;
     private List<AnalysisMethod> methods;
 
+    @JSONField(serialize = false)
     private String classType;
 }

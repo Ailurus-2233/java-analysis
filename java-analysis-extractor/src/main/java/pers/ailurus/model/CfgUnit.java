@@ -1,8 +1,11 @@
 package pers.ailurus.model;
 
+import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
 import soot.Unit;
 
+import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -13,9 +16,10 @@ import java.util.List;
  */
 @Data
 public class CfgUnit {
-    private Unit unit;
+    @JSONField(serialize = false)
+    private transient Unit unit;
     private int id;
-    private List<Integer> child;
+    private int[] child;
 
     public CfgUnit(Unit unit, int i) {
         this.unit = unit;
@@ -23,6 +27,14 @@ public class CfgUnit {
     }
 
     public String toString() {
-        return String.format("(%d, %s)", this.id, this.child.toString());
+        return String.format("(%d, %s)", this.id, Arrays.toString(this.child));
+    }
+
+    public void setChild(List<Integer> child) {
+        this.child = child.stream().mapToInt(Integer::intValue).toArray();
+    }
+
+    public void setChild(int[] child) {
+        this.child = child;
     }
 }

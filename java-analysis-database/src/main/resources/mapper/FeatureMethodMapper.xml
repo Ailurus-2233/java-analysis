@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.ailurus.mapper.FeatureMethodMapper">
+  <resultMap id="BaseResultMap" type="pers.ailurus.model.FeatureMethod">
+    <!--@mbg.generated-->
+    <!--@Table feature_method-->
+    <id column="md5" jdbcType="VARCHAR" property="md5" />
+    <result column="modifier" jdbcType="INTEGER" property="modifier" />
+    <result column="args_num" jdbcType="INTEGER" property="argsNum" />
+    <result column="return_type" jdbcType="INTEGER" property="returnType" />
+    <result column="cfg_finger" jdbcType="VARCHAR" property="cfgFinger" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    md5, modifier, args_num, return_type, cfg_finger
+  </sql>
+</mapper>

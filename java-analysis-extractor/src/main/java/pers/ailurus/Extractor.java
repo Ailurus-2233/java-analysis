@@ -49,6 +49,11 @@ public class Extractor {
         Scene.v().loadNecessaryClasses();
     }
 
+
+    public static void resetSoot() {
+        G.reset();
+    }
+
     /**
      * 获取方法的控制流图
      *
@@ -126,7 +131,8 @@ public class Extractor {
         am.setModifier(sm.getModifiers());
         am.setReturnType(sm.getReturnType().toString());
         am.setArgsNum(sm.getParameterTypes().size());
-        am.setCfgFinger(getCfgFinger(getCfg(sm)));
+        am.setCfg(getCfg(sm));
+        am.setCfgFinger(getCfgFinger(am.getCfg()));
         am.genMd5();
         return am;
     }
@@ -139,13 +145,14 @@ public class Extractor {
      */
     public static AnalysisPackage analysisPackage(String packageDir) {
         setupSoot(packageDir);
-        Chain<SootClass> classChain = Scene.v().getApplicationClasses();
+        List<SootClass> classChain = Scene.v().getApplicationClasses().stream().toList();
         AnalysisPackage ap = new AnalysisPackage();
         ap.setClassNum(classChain.size());
         Set<String> packageSet = new HashSet<>();
         List<AnalysisClass> acList = new ArrayList<>(ap.getClassNum());
 
         List<CdgUnit> cdg = getCdg(classChain);
+        ap.setCdg(cdg);
         Map<String, Integer> dep = getDepMap(cdg);
         Map<String, Integer> beDep = getBeDepMap(cdg);
 
@@ -155,6 +162,7 @@ public class Extractor {
             if (packageDeep > ap.getPackageDeep()) {
                 ap.setPackageDeep(packageDeep);
             }
+
             packageSet.add(sc.getJavaPackageName());
             AnalysisClass ac = analysisClass(sc, packageDir);
             List<AnalysisMethod> amList = new ArrayList<>(sc.getMethodCount());
@@ -178,7 +186,7 @@ public class Extractor {
      * @param classes 待分析的类列表
      * @return {@code List<CdgUnit>}
      */
-    public static List<CdgUnit> getCdg(Chain<SootClass> classes) {
+    public static List<CdgUnit> getCdg(List<SootClass> classes) {
         List<CdgUnit> cdg = new ArrayList<>();
         Map<String, Integer> classMap = new HashMap<>(classes.size());
         int i = 0;
@@ -223,7 +231,7 @@ public class Extractor {
     public static Map<String, Integer> getDepMap(List<CdgUnit> cdg) {
         Map<String, Integer> dep = new HashMap<>(cdg.size());
         for (CdgUnit c: cdg) {
-            dep.put(c.getClassName(), c.getDependencies().size());
+            dep.put(c.getClassName(), c.getDependencies().length);
         }
         return dep;
     }

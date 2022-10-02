@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pers.ailurus.mapper.FeatureFileMapper">
+  <resultMap id="BaseResultMap" type="pers.ailurus.model.FeatureFile">
+    <!--@mbg.generated-->
+    <!--@Table feature_file-->
+    <id column="md5" jdbcType="VARCHAR" property="md5" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="class_num" jdbcType="INTEGER" property="classNum" />
+    <result column="package_deep" jdbcType="INTEGER" property="packageDeep" />
+    <result column="package_num" jdbcType="INTEGER" property="packageNum" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    md5, `name`, version, class_num, package_deep, package_num
+  </sql>
+</mapper>

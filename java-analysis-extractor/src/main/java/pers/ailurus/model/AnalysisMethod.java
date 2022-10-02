@@ -3,6 +3,7 @@ package pers.ailurus.model;
 import lombok.Data;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
