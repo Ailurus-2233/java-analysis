@@ -12,12 +12,14 @@ import static pers.ailurus.Extractor.extract;
 import static pers.ailurus.FileUtil.*;
 import static pers.ailurus.NetUtil.dowlnoad;
 
-public class Main {
+public class MavenMainWithMysql {
 
-    private static Logger logger = LoggerFactory.getLogger(Main.class);
+    private static Logger logger = LoggerFactory.getLogger(MavenMainWithMysql.class);
+
     public static void main(String[] args) {
         String maven_path = args[0];
         try {
+            DataOperator.initOperator();
             List<String[]> info = readCSVFile(maven_path);
             long sumTime = 0;
             for (int i = 1; i < info.size(); i++) {
@@ -27,21 +29,28 @@ public class Main {
                 String version = line[1];
                 String url = line[2];
                 String path = "jar" + File.separator + name + "-" + version + ".jar";
-                dowlnoad(url, name + "-" + version + ".jar", "jar" + File.separator);
-                MPDataOperator.insert(ObjectGenerator.getMavenRepository(name, version, url, path));
+                String downloadName = name + "-" + version + ".jar";
+                logger.info(downloadName + " 开始分析");
+                dowlnoad(url, downloadName, "jar" + File.separator);
+                long time1 = System.currentTimeMillis();
+                logger.info(downloadName + " 下载耗时：" + (time1 - startTime) + "ms");
+                DataOperator.insert(ObjectGenerator.getMavenRepository(name, version, url, path));
                 AnalysisPackage ap = extract(path);
-                MPDataOperator.insertAnalysisPackage(name, version, ap);
+                long time2 = System.currentTimeMillis();
+                logger.info(downloadName + " 分析耗时：" + (time2 - time1) + "ms");
+                DataOperator.insertAnalysisPackage(name, version, ap);
                 deleteFile(path);
-                deleteFolder("jar"+ File.separator + name + "-" + version);
+                deleteFolder("jar" + File.separator + name + "-" + version);
                 long endTime = System.currentTimeMillis();
                 sumTime += endTime - startTime;
-                logger.info(name + "-" + version + ".jar 分析完成，耗时" + (endTime - startTime) + "ms");
+                logger.info(downloadName + " 数据插入耗时：" + (endTime - time2) + "ms");
+                logger.info(downloadName + ".jar 分析完成，总耗时" + (endTime - startTime) + "ms");
             }
 
             logger.info("总分析数量：" + info.size());
             logger.info("总耗时：" + sumTime + "ms");
             logger.info("平均耗时：" + sumTime / info.size() + "ms");
-            MPDataOperator.close();
+            DataOperator.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

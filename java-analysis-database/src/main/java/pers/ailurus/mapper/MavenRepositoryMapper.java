@@ -1,9 +1,29 @@
 package pers.ailurus.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
 import pers.ailurus.model.MavenRepository;
 
-import java.util.List;
+public interface MavenRepositoryMapper {
+    int deleteByPrimaryKey(String md5);
 
-public interface MavenRepositoryMapper extends BaseMapper<MavenRepository> {
+    int insert(MavenRepository record);
+
+    int insertOrUpdate(MavenRepository record);
+
+    int insertOrUpdateSelective(MavenRepository record);
+
+    int insertSelective(MavenRepository record);
+
+    MavenRepository selectByPrimaryKey(String md5);
+
+    int updateByPrimaryKeySelective(MavenRepository record);
+
+    int updateByPrimaryKey(MavenRepository record);
+
+    int updateBatch(List<MavenRepository> list);
+
+    int batchInsert(@Param("list") List<MavenRepository> list);
+
+    int updateBatchSelective(List<MavenRepository> list);
 }

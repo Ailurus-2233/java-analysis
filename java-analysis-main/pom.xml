@@ -45,7 +45,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>pers.ailurus.Main</mainClass>
+                            <mainClass>pers.ailurus.MavenMainWithMysql</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="pers.ailurus.model.MavenRepository">
     <!--@mbg.generated-->
     <!--@Table maven_repository-->
-    <id column="id" jdbcType="INTEGER" property="id" />
+    <id column="md5" jdbcType="VARCHAR" property="md5" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="version" jdbcType="VARCHAR" property="version" />
     <result column="url" jdbcType="LONGVARCHAR" property="url" />
@@ -12,6 +12,202 @@
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, `name`, version, url, `size`
+    md5, `name`, version, url, `size`
   </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from maven_repository
+    where md5 = #{md5,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    <!--@mbg.generated-->
+    delete from maven_repository
+    where md5 = #{md5,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="pers.ailurus.model.MavenRepository">
+    <!--@mbg.generated-->
+    insert into maven_repository (md5, `name`, version, 
+      url, `size`)
+    values (#{md5,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR}, 
+      #{url,jdbcType=LONGVARCHAR}, #{size,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="pers.ailurus.model.MavenRepository">
+    <!--@mbg.generated-->
+    insert into maven_repository
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="md5 != null">
+        md5,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="version != null">
+        version,
+      </if>
+      <if test="url != null">
+        url,
+      </if>
+      <if test="size != null">
+        `size`,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="md5 != null">
+        #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null">
+        #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null">
+        #{url,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="size != null">
+        #{size,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="pers.ailurus.model.MavenRepository">
+    <!--@mbg.generated-->
+    update maven_repository
+    <set>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null">
+        version = #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null">
+        url = #{url,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="size != null">
+        `size` = #{size,jdbcType=BIGINT},
+      </if>
+    </set>
+    where md5 = #{md5,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="pers.ailurus.model.MavenRepository">
+    <!--@mbg.generated-->
+    update maven_repository
+    set `name` = #{name,jdbcType=VARCHAR},
+      version = #{version,jdbcType=VARCHAR},
+      url = #{url,jdbcType=LONGVARCHAR},
+      `size` = #{size,jdbcType=BIGINT}
+    where md5 = #{md5,jdbcType=VARCHAR}
+  </update>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update maven_repository
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="`name` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.name,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="version = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.version,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="url = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.url,jdbcType=LONGVARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="`size` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.size,jdbcType=BIGINT}
+        </foreach>
+      </trim>
+    </trim>
+    where md5 in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.md5,jdbcType=VARCHAR}
+    </foreach>
+  </update>
+  <insert id="batchInsert" parameterType="map">
+    <!--@mbg.generated-->
+    insert into maven_repository
+    (md5, `name`, version, url, `size`)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.md5,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR}, #{item.version,jdbcType=VARCHAR}, 
+        #{item.url,jdbcType=LONGVARCHAR}, #{item.size,jdbcType=BIGINT})
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" parameterType="pers.ailurus.model.MavenRepository">
+    <!--@mbg.generated-->
+    insert into maven_repository
+    (md5, `name`, version, url, `size`)
+    values
+    (#{md5,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{version,jdbcType=VARCHAR}, 
+      #{url,jdbcType=LONGVARCHAR}, #{size,jdbcType=BIGINT})
+    on duplicate key update 
+    md5 = #{md5,jdbcType=VARCHAR}, 
+    `name` = #{name,jdbcType=VARCHAR}, 
+    version = #{version,jdbcType=VARCHAR}, 
+    url = #{url,jdbcType=LONGVARCHAR}, 
+    `size` = #{size,jdbcType=BIGINT}
+  </insert>
+  <insert id="insertOrUpdateSelective" parameterType="pers.ailurus.model.MavenRepository">
+    <!--@mbg.generated-->
+    insert into maven_repository
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="md5 != null">
+        md5,
+      </if>
+      <if test="name != null">
+        `name`,
+      </if>
+      <if test="version != null">
+        version,
+      </if>
+      <if test="url != null">
+        url,
+      </if>
+      <if test="size != null">
+        `size`,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="md5 != null">
+        #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null">
+        #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null">
+        #{url,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="size != null">
+        #{size,jdbcType=BIGINT},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="md5 != null">
+        md5 = #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null">
+        version = #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="url != null">
+        url = #{url,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="size != null">
+        `size` = #{size,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
 </mapper>

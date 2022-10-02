@@ -3,6 +3,7 @@ package pers.ailurus;
 import pers.ailurus.model.*;
 
 import java.io.File;
+import java.io.IOException;
 
 public class ObjectGenerator {
 
@@ -46,6 +47,11 @@ public class ObjectGenerator {
         mr.setVersion(version);
         mr.setUrl(url);
         mr.setSize(new File(filePath).length());
+        try {
+            mr.setMd5(FileUtil.getFileMd5(filePath));
+        } catch (IOException ignored) {
+
+        }
         return mr;
     }
 

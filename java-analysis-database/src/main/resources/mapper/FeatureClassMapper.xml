@@ -18,4 +18,340 @@
     md5, modifier, interface_num, has_super_class, field_num, method_num, dep_class_num, 
     be_dep_num
   </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from feature_class
+    where md5 = #{md5,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    <!--@mbg.generated-->
+    delete from feature_class
+    where md5 = #{md5,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="pers.ailurus.model.FeatureClass">
+    <!--@mbg.generated-->
+    insert into feature_class (md5, modifier, interface_num, 
+      has_super_class, field_num, method_num, 
+      dep_class_num, be_dep_num)
+    values (#{md5,jdbcType=VARCHAR}, #{modifier,jdbcType=INTEGER}, #{interfaceNum,jdbcType=INTEGER}, 
+      #{hasSuperClass,jdbcType=INTEGER}, #{fieldNum,jdbcType=INTEGER}, #{methodNum,jdbcType=INTEGER}, 
+      #{depClassNum,jdbcType=INTEGER}, #{beDepNum,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="pers.ailurus.model.FeatureClass">
+    <!--@mbg.generated-->
+    insert into feature_class
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="md5 != null">
+        md5,
+      </if>
+      <if test="modifier != null">
+        modifier,
+      </if>
+      <if test="interfaceNum != null">
+        interface_num,
+      </if>
+      <if test="hasSuperClass != null">
+        has_super_class,
+      </if>
+      <if test="fieldNum != null">
+        field_num,
+      </if>
+      <if test="methodNum != null">
+        method_num,
+      </if>
+      <if test="depClassNum != null">
+        dep_class_num,
+      </if>
+      <if test="beDepNum != null">
+        be_dep_num,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="md5 != null">
+        #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="modifier != null">
+        #{modifier,jdbcType=INTEGER},
+      </if>
+      <if test="interfaceNum != null">
+        #{interfaceNum,jdbcType=INTEGER},
+      </if>
+      <if test="hasSuperClass != null">
+        #{hasSuperClass,jdbcType=INTEGER},
+      </if>
+      <if test="fieldNum != null">
+        #{fieldNum,jdbcType=INTEGER},
+      </if>
+      <if test="methodNum != null">
+        #{methodNum,jdbcType=INTEGER},
+      </if>
+      <if test="depClassNum != null">
+        #{depClassNum,jdbcType=INTEGER},
+      </if>
+      <if test="beDepNum != null">
+        #{beDepNum,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="pers.ailurus.model.FeatureClass">
+    <!--@mbg.generated-->
+    update feature_class
+    <set>
+      <if test="modifier != null">
+        modifier = #{modifier,jdbcType=INTEGER},
+      </if>
+      <if test="interfaceNum != null">
+        interface_num = #{interfaceNum,jdbcType=INTEGER},
+      </if>
+      <if test="hasSuperClass != null">
+        has_super_class = #{hasSuperClass,jdbcType=INTEGER},
+      </if>
+      <if test="fieldNum != null">
+        field_num = #{fieldNum,jdbcType=INTEGER},
+      </if>
+      <if test="methodNum != null">
+        method_num = #{methodNum,jdbcType=INTEGER},
+      </if>
+      <if test="depClassNum != null">
+        dep_class_num = #{depClassNum,jdbcType=INTEGER},
+      </if>
+      <if test="beDepNum != null">
+        be_dep_num = #{beDepNum,jdbcType=INTEGER},
+      </if>
+    </set>
+    where md5 = #{md5,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="pers.ailurus.model.FeatureClass">
+    <!--@mbg.generated-->
+    update feature_class
+    set modifier = #{modifier,jdbcType=INTEGER},
+      interface_num = #{interfaceNum,jdbcType=INTEGER},
+      has_super_class = #{hasSuperClass,jdbcType=INTEGER},
+      field_num = #{fieldNum,jdbcType=INTEGER},
+      method_num = #{methodNum,jdbcType=INTEGER},
+      dep_class_num = #{depClassNum,jdbcType=INTEGER},
+      be_dep_num = #{beDepNum,jdbcType=INTEGER}
+    where md5 = #{md5,jdbcType=VARCHAR}
+  </update>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update feature_class
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="modifier = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.modifier,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="interface_num = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.interfaceNum,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="has_super_class = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.hasSuperClass,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="field_num = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.fieldNum,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="method_num = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.methodNum,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="dep_class_num = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.depClassNum,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="be_dep_num = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.beDepNum,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+    </trim>
+    where md5 in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.md5,jdbcType=VARCHAR}
+    </foreach>
+  </update>
+  <update id="updateBatchSelective" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update feature_class
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="modifier = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.modifier != null">
+            when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.modifier,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="interface_num = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.interfaceNum != null">
+            when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.interfaceNum,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="has_super_class = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.hasSuperClass != null">
+            when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.hasSuperClass,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="field_num = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.fieldNum != null">
+            when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.fieldNum,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="method_num = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.methodNum != null">
+            when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.methodNum,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="dep_class_num = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.depClassNum != null">
+            when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.depClassNum,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="be_dep_num = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.beDepNum != null">
+            when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.beDepNum,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+    </trim>
+    where md5 in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.md5,jdbcType=VARCHAR}
+    </foreach>
+  </update>
+  <insert id="batchInsert" parameterType="map">
+    <!--@mbg.generated-->
+    insert into feature_class
+    (md5, modifier, interface_num, has_super_class, field_num, method_num, dep_class_num, 
+      be_dep_num)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.md5,jdbcType=VARCHAR}, #{item.modifier,jdbcType=INTEGER}, #{item.interfaceNum,jdbcType=INTEGER}, 
+        #{item.hasSuperClass,jdbcType=INTEGER}, #{item.fieldNum,jdbcType=INTEGER}, #{item.methodNum,jdbcType=INTEGER}, 
+        #{item.depClassNum,jdbcType=INTEGER}, #{item.beDepNum,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" parameterType="pers.ailurus.model.FeatureClass">
+    <!--@mbg.generated-->
+    insert into feature_class
+    (md5, modifier, interface_num, has_super_class, field_num, method_num, dep_class_num, 
+      be_dep_num)
+    values
+    (#{md5,jdbcType=VARCHAR}, #{modifier,jdbcType=INTEGER}, #{interfaceNum,jdbcType=INTEGER}, 
+      #{hasSuperClass,jdbcType=INTEGER}, #{fieldNum,jdbcType=INTEGER}, #{methodNum,jdbcType=INTEGER}, 
+      #{depClassNum,jdbcType=INTEGER}, #{beDepNum,jdbcType=INTEGER})
+    on duplicate key update 
+    md5 = #{md5,jdbcType=VARCHAR}, 
+    modifier = #{modifier,jdbcType=INTEGER}, 
+    interface_num = #{interfaceNum,jdbcType=INTEGER}, 
+    has_super_class = #{hasSuperClass,jdbcType=INTEGER}, 
+    field_num = #{fieldNum,jdbcType=INTEGER}, 
+    method_num = #{methodNum,jdbcType=INTEGER}, 
+    dep_class_num = #{depClassNum,jdbcType=INTEGER}, 
+    be_dep_num = #{beDepNum,jdbcType=INTEGER}
+  </insert>
+  <insert id="insertOrUpdateSelective" parameterType="pers.ailurus.model.FeatureClass">
+    <!--@mbg.generated-->
+    insert into feature_class
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="md5 != null">
+        md5,
+      </if>
+      <if test="modifier != null">
+        modifier,
+      </if>
+      <if test="interfaceNum != null">
+        interface_num,
+      </if>
+      <if test="hasSuperClass != null">
+        has_super_class,
+      </if>
+      <if test="fieldNum != null">
+        field_num,
+      </if>
+      <if test="methodNum != null">
+        method_num,
+      </if>
+      <if test="depClassNum != null">
+        dep_class_num,
+      </if>
+      <if test="beDepNum != null">
+        be_dep_num,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="md5 != null">
+        #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="modifier != null">
+        #{modifier,jdbcType=INTEGER},
+      </if>
+      <if test="interfaceNum != null">
+        #{interfaceNum,jdbcType=INTEGER},
+      </if>
+      <if test="hasSuperClass != null">
+        #{hasSuperClass,jdbcType=INTEGER},
+      </if>
+      <if test="fieldNum != null">
+        #{fieldNum,jdbcType=INTEGER},
+      </if>
+      <if test="methodNum != null">
+        #{methodNum,jdbcType=INTEGER},
+      </if>
+      <if test="depClassNum != null">
+        #{depClassNum,jdbcType=INTEGER},
+      </if>
+      <if test="beDepNum != null">
+        #{beDepNum,jdbcType=INTEGER},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="md5 != null">
+        md5 = #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="modifier != null">
+        modifier = #{modifier,jdbcType=INTEGER},
+      </if>
+      <if test="interfaceNum != null">
+        interface_num = #{interfaceNum,jdbcType=INTEGER},
+      </if>
+      <if test="hasSuperClass != null">
+        has_super_class = #{hasSuperClass,jdbcType=INTEGER},
+      </if>
+      <if test="fieldNum != null">
+        field_num = #{fieldNum,jdbcType=INTEGER},
+      </if>
+      <if test="methodNum != null">
+        method_num = #{methodNum,jdbcType=INTEGER},
+      </if>
+      <if test="depClassNum != null">
+        dep_class_num = #{depClassNum,jdbcType=INTEGER},
+      </if>
+      <if test="beDepNum != null">
+        be_dep_num = #{beDepNum,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
 </mapper>

@@ -4,12 +4,109 @@
   <resultMap id="BaseResultMap" type="pers.ailurus.model.RelationClassMethod">
     <!--@mbg.generated-->
     <!--@Table relation_class_method-->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="class_md5" jdbcType="VARCHAR" property="classMd5" />
-    <result column="method_md5" jdbcType="VARCHAR" property="methodMd5" />
+    <id column="class_md5" jdbcType="VARCHAR" property="classMd5" />
+    <id column="method_md5" jdbcType="VARCHAR" property="methodMd5" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, class_md5, method_md5
+    class_md5, method_md5
   </sql>
+  <delete id="deleteByPrimaryKey" parameterType="map">
+    <!--@mbg.generated-->
+    delete from relation_class_method
+    where class_md5 = #{classMd5,jdbcType=VARCHAR}
+      and method_md5 = #{methodMd5,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="pers.ailurus.model.RelationClassMethod">
+    <!--@mbg.generated-->
+    insert into relation_class_method (class_md5, method_md5)
+    values (#{classMd5,jdbcType=VARCHAR}, #{methodMd5,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="pers.ailurus.model.RelationClassMethod">
+    <!--@mbg.generated-->
+    insert into relation_class_method
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="classMd5 != null">
+        class_md5,
+      </if>
+      <if test="methodMd5 != null">
+        method_md5,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="classMd5 != null">
+        #{classMd5,jdbcType=VARCHAR},
+      </if>
+      <if test="methodMd5 != null">
+        #{methodMd5,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update relation_class_method
+    <trim prefix="set" suffixOverrides="," />
+    where class_md5 in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.classMd5,jdbcType=VARCHAR}
+    </foreach>
+  </update>
+  <update id="updateBatchSelective" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update relation_class_method
+    <trim prefix="set" suffixOverrides="," />
+    where class_md5 in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.classMd5,jdbcType=VARCHAR}
+    </foreach>
+  </update>
+  <insert id="batchInsert" parameterType="map">
+    <!--@mbg.generated-->
+    insert into relation_class_method
+    (class_md5, method_md5)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.classMd5,jdbcType=VARCHAR}, #{item.methodMd5,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" parameterType="pers.ailurus.model.RelationClassMethod">
+    <!--@mbg.generated-->
+    insert into relation_class_method
+    (class_md5, method_md5)
+    values
+    (#{classMd5,jdbcType=VARCHAR}, #{methodMd5,jdbcType=VARCHAR})
+    on duplicate key update 
+    class_md5 = #{classMd5,jdbcType=VARCHAR}, 
+    method_md5 = #{methodMd5,jdbcType=VARCHAR}
+  </insert>
+  <insert id="insertOrUpdateSelective" parameterType="pers.ailurus.model.RelationClassMethod">
+    <!--@mbg.generated-->
+    insert into relation_class_method
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="classMd5 != null">
+        class_md5,
+      </if>
+      <if test="methodMd5 != null">
+        method_md5,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="classMd5 != null">
+        #{classMd5,jdbcType=VARCHAR},
+      </if>
+      <if test="methodMd5 != null">
+        #{methodMd5,jdbcType=VARCHAR},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="classMd5 != null">
+        class_md5 = #{classMd5,jdbcType=VARCHAR},
+      </if>
+      <if test="methodMd5 != null">
+        method_md5 = #{methodMd5,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
 </mapper>

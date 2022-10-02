@@ -134,4 +134,90 @@ public class FileUtil {
         }
     }
 
+    /**
+     * 追加一行字符串到文件中
+     */
+    public static void writeLine(String text, String filePath) {
+        try {
+            FileWriter fw = new FileWriter(filePath, true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(text);
+            bw.newLine();
+            bw.close();
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeLines(List<String> info, String filePath) {
+        try {
+            FileWriter fw = new FileWriter(filePath, true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            for (String s : info) {
+                bw.write(s);
+                bw.newLine();
+            }
+            bw.close();
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean createFile(String path) {
+        File file = new File(path);
+        if (!file.exists()) {
+            try {
+                return file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 写入新的csv文件
+     * @param info
+     * @param path
+     * @return
+     */
+    public static void writeCSV(List<String[]> info, String path) {
+        try {
+            FileWriter fw = new FileWriter(path);
+            BufferedWriter bw = new BufferedWriter(fw);
+            for (String[] strings : info) {
+                bw.write(String.join(",", strings));
+                bw.newLine();
+            }
+            bw.close();
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 追加写入csv文件
+     *
+     * @param info
+     * @param path
+     */
+    public static void writeCSVAppend(List<String[]> info, String path) {
+        try {
+            FileWriter fw = new FileWriter(path, true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            for (String[] strings : info) {
+                bw.write(String.join(",", strings));
+                bw.newLine();
+            }
+            bw.close();
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

@@ -14,4 +14,238 @@
     <!--@mbg.generated-->
     md5, modifier, args_num, return_type, cfg_finger
   </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from feature_method
+    where md5 = #{md5,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    <!--@mbg.generated-->
+    delete from feature_method
+    where md5 = #{md5,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="pers.ailurus.model.FeatureMethod">
+    <!--@mbg.generated-->
+    insert into feature_method (md5, modifier, args_num, 
+      return_type, cfg_finger)
+    values (#{md5,jdbcType=VARCHAR}, #{modifier,jdbcType=INTEGER}, #{argsNum,jdbcType=INTEGER}, 
+      #{returnType,jdbcType=INTEGER}, #{cfgFinger,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="pers.ailurus.model.FeatureMethod">
+    <!--@mbg.generated-->
+    insert into feature_method
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="md5 != null">
+        md5,
+      </if>
+      <if test="modifier != null">
+        modifier,
+      </if>
+      <if test="argsNum != null">
+        args_num,
+      </if>
+      <if test="returnType != null">
+        return_type,
+      </if>
+      <if test="cfgFinger != null">
+        cfg_finger,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="md5 != null">
+        #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="modifier != null">
+        #{modifier,jdbcType=INTEGER},
+      </if>
+      <if test="argsNum != null">
+        #{argsNum,jdbcType=INTEGER},
+      </if>
+      <if test="returnType != null">
+        #{returnType,jdbcType=INTEGER},
+      </if>
+      <if test="cfgFinger != null">
+        #{cfgFinger,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="pers.ailurus.model.FeatureMethod">
+    <!--@mbg.generated-->
+    update feature_method
+    <set>
+      <if test="modifier != null">
+        modifier = #{modifier,jdbcType=INTEGER},
+      </if>
+      <if test="argsNum != null">
+        args_num = #{argsNum,jdbcType=INTEGER},
+      </if>
+      <if test="returnType != null">
+        return_type = #{returnType,jdbcType=INTEGER},
+      </if>
+      <if test="cfgFinger != null">
+        cfg_finger = #{cfgFinger,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where md5 = #{md5,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="pers.ailurus.model.FeatureMethod">
+    <!--@mbg.generated-->
+    update feature_method
+    set modifier = #{modifier,jdbcType=INTEGER},
+      args_num = #{argsNum,jdbcType=INTEGER},
+      return_type = #{returnType,jdbcType=INTEGER},
+      cfg_finger = #{cfgFinger,jdbcType=VARCHAR}
+    where md5 = #{md5,jdbcType=VARCHAR}
+  </update>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update feature_method
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="modifier = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.modifier,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="args_num = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.argsNum,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="return_type = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.returnType,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="cfg_finger = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.cfgFinger,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+    </trim>
+    where md5 in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.md5,jdbcType=VARCHAR}
+    </foreach>
+  </update>
+  <update id="updateBatchSelective" parameterType="java.util.List">
+    <!--@mbg.generated-->
+    update feature_method
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="modifier = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.modifier != null">
+            when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.modifier,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="args_num = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.argsNum != null">
+            when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.argsNum,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="return_type = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.returnType != null">
+            when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.returnType,jdbcType=INTEGER}
+          </if>
+        </foreach>
+      </trim>
+      <trim prefix="cfg_finger = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          <if test="item.cfgFinger != null">
+            when md5 = #{item.md5,jdbcType=VARCHAR} then #{item.cfgFinger,jdbcType=VARCHAR}
+          </if>
+        </foreach>
+      </trim>
+    </trim>
+    where md5 in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.md5,jdbcType=VARCHAR}
+    </foreach>
+  </update>
+  <insert id="batchInsert" parameterType="map">
+    <!--@mbg.generated-->
+    insert into feature_method
+    (md5, modifier, args_num, return_type, cfg_finger)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.md5,jdbcType=VARCHAR}, #{item.modifier,jdbcType=INTEGER}, #{item.argsNum,jdbcType=INTEGER}, 
+        #{item.returnType,jdbcType=INTEGER}, #{item.cfgFinger,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" parameterType="pers.ailurus.model.FeatureMethod">
+    <!--@mbg.generated-->
+    insert into feature_method
+    (md5, modifier, args_num, return_type, cfg_finger)
+    values
+    (#{md5,jdbcType=VARCHAR}, #{modifier,jdbcType=INTEGER}, #{argsNum,jdbcType=INTEGER}, 
+      #{returnType,jdbcType=INTEGER}, #{cfgFinger,jdbcType=VARCHAR})
+    on duplicate key update 
+    md5 = #{md5,jdbcType=VARCHAR}, 
+    modifier = #{modifier,jdbcType=INTEGER}, 
+    args_num = #{argsNum,jdbcType=INTEGER}, 
+    return_type = #{returnType,jdbcType=INTEGER}, 
+    cfg_finger = #{cfgFinger,jdbcType=VARCHAR}
+  </insert>
+  <insert id="insertOrUpdateSelective" parameterType="pers.ailurus.model.FeatureMethod">
+    <!--@mbg.generated-->
+    insert into feature_method
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="md5 != null">
+        md5,
+      </if>
+      <if test="modifier != null">
+        modifier,
+      </if>
+      <if test="argsNum != null">
+        args_num,
+      </if>
+      <if test="returnType != null">
+        return_type,
+      </if>
+      <if test="cfgFinger != null">
+        cfg_finger,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="md5 != null">
+        #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="modifier != null">
+        #{modifier,jdbcType=INTEGER},
+      </if>
+      <if test="argsNum != null">
+        #{argsNum,jdbcType=INTEGER},
+      </if>
+      <if test="returnType != null">
+        #{returnType,jdbcType=INTEGER},
+      </if>
+      <if test="cfgFinger != null">
+        #{cfgFinger,jdbcType=VARCHAR},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="md5 != null">
+        md5 = #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="modifier != null">
+        modifier = #{modifier,jdbcType=INTEGER},
+      </if>
+      <if test="argsNum != null">
+        args_num = #{argsNum,jdbcType=INTEGER},
+      </if>
+      <if test="returnType != null">
+        return_type = #{returnType,jdbcType=INTEGER},
+      </if>
+      <if test="cfgFinger != null">
+        cfg_finger = #{cfgFinger,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
 </mapper>
