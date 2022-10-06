@@ -1,6 +1,8 @@
 package pers.ailurus;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pers.ailurus.model.*;
 import soot.*;
 import soot.jimple.DefinitionStmt;
@@ -12,10 +14,27 @@ import soot.util.Chain;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.*;
 
 import static pers.ailurus.FileUtil.getFileMd5;
 
 public class Extractor {
+
+    private static Logger logger = LoggerFactory.getLogger(Extractor.class);
+
+    public static AnalysisPackage extract(String filePath, int limitSecond) throws TimeoutException {
+        Callable<AnalysisPackage> task = () -> extract(filePath);
+        ExecutorService exeServices = Executors.newSingleThreadExecutor();
+        Future<AnalysisPackage> future = exeServices.submit(task);
+        try {
+            return future.get(limitSecond, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            future.cancel(true);
+            throw new TimeoutException("任务超时");
+        } finally {
+            exeServices.shutdown();
+        }
+    }
 
     public static AnalysisPackage extract(String filePath) throws RuntimeException{
         if (!FileUtil.isJarFile(filePath)) {
@@ -196,6 +215,9 @@ public class Extractor {
         }
         for (SootClass sc : classes) {
             // 从父类，属性，方法返回值，方法中单元左值类型获取依赖信息
+            if ("module-info".equals(sc.getName())) {
+                continue;
+            }
             Set<String> temp = new HashSet<>();
             temp.add(sc.getSuperclass().getName());
             Chain<SootField> fields = sc.getFields();

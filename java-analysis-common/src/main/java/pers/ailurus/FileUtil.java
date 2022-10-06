@@ -1,8 +1,13 @@
 package pers.ailurus;
 
+import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
+import com.opencsv.exceptions.CsvException;
+import com.opencsv.exceptions.CsvValidationException;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -42,8 +47,8 @@ public class FileUtil {
 //        sb.append("/usr/bin/7z x -y \"").append(filePath).append("\" -o\"").append(target).append("\"");
         sb.append("7z x -y \"").append(filePath).append("\" -o\"").append(target).append("\"");
         try {
-            Process process = Runtime.getRuntime().exec(new String[]{"sh", "-c", sb.toString()});
-//            Process process = Runtime.getRuntime().exec(sb.toString());
+//            Process process = Runtime.getRuntime().exec(new String[]{"sh", "-c", sb.toString()});
+            Process process = Runtime.getRuntime().exec(sb.toString());
             process.waitFor();
             return true;
         } catch (IOException | InterruptedException e) {
@@ -107,7 +112,14 @@ public class FileUtil {
 
     public static List<String[]> readCSVFile(String filePath) throws IOException {
         // 创建 reader
-        return Files.readAllLines(Paths.get(filePath)).stream().map(s -> s.split(",")).toList();
+        try (FileInputStream fis = new FileInputStream(filePath);
+             InputStreamReader isr = new InputStreamReader(fis,
+                     StandardCharsets.UTF_8);
+             CSVReader reader = new CSVReader(isr)) {
+            return reader.readAll();
+        } catch (CsvException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void deleteFile(String filePath) {
@@ -185,17 +197,14 @@ public class FileUtil {
      * @return
      */
     public static void writeCSV(List<String[]> info, String path) {
-        try {
-            FileWriter fw = new FileWriter(path);
-            BufferedWriter bw = new BufferedWriter(fw);
-            for (String[] strings : info) {
-                bw.write(String.join(",", strings));
-                bw.newLine();
-            }
-            bw.close();
-            fw.close();
+        deleteAndCreateFile(path);
+        try (FileOutputStream fos = new FileOutputStream(path);
+             OutputStreamWriter osw = new OutputStreamWriter(fos,
+                     StandardCharsets.UTF_8);
+             CSVWriter writer = new CSVWriter(osw)) {
+            writer.writeAll(info);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -206,18 +215,19 @@ public class FileUtil {
      * @param path
      */
     public static void writeCSVAppend(List<String[]> info, String path) {
-        try {
-            FileWriter fw = new FileWriter(path, true);
-            BufferedWriter bw = new BufferedWriter(fw);
-            for (String[] strings : info) {
-                bw.write(String.join(",", strings));
-                bw.newLine();
-            }
-            bw.close();
-            fw.close();
+        try (FileOutputStream fos = new FileOutputStream(path);
+             OutputStreamWriter osw = new OutputStreamWriter(fos,
+                     StandardCharsets.UTF_8);
+             CSVWriter writer = new CSVWriter(osw)) {
+            writer.writeAll(info);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
+    }
+
+    public static String getFileNameWithOutSuffix(String path) {
+        File file = new File(path);
+        return file.getName().substring(0, file.getName().lastIndexOf("."));
     }
 
 }

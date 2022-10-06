@@ -9,7 +9,12 @@ import java.net.URL;
 
 public class NetUtil {
     private static Logger logger = LoggerFactory.getLogger(NetUtil.class);
-    public static boolean dowlnoad(String url, String fileName, String dir) {
+
+    public static boolean dowlnoad(String url, String fileName, String dir, int count) {
+        if (count == 5) {
+            logger.warn("下载失败，请检查下载链接：" + url);
+            return false;
+        }
         try {
             URL http = new URL(url);
             File dirFile = new File(dir);
@@ -19,7 +24,7 @@ public class NetUtil {
             FileUtils.copyURLToFile(http, new File(dir + File.separator + fileName));
         } catch (Exception e) {
             logger.warn("网络异常，重新请求下载：" + url);
-            dowlnoad(url, fileName, dir);
+            dowlnoad(url, fileName, dir, count + 1);
         }
         return true;
     }

@@ -4,46 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff6aae35-e46e-4d40-ab45-e70f2693fee7" name="Changes" comment="20221002 完成根据csv自动化提取特征的程序，效率10s/个">
-      <change afterPath="$PROJECT_DIR$/.idea/csv-plugin.xml" afterDir="false" />
+    <list default="true" id="ff6aae35-e46e-4d40-ab45-e70f2693fee7" name="Changes" comment="20221002 放弃保存到数据库的思路，采用保存到CSV文件，之后通过其他方式保存到mysql">
       <change afterPath="$PROJECT_DIR$/csv/feature_class.csv" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/csv/feature_file.csv" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/csv/feature_method.csv" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/csv/maven_repository.csv" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/csv/relation_class_method.csv" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/csv/relation_file_class.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/CSVOperator.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/java-analysis-database/src/main/resources/mybatis.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/java-analysis-main/src/main/java/pers/ailurus/MavenMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/MyBatisCodeHelperDatasource.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/MyBatisCodeHelperDatasource.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/temp.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/csv-plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-plugin.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java-analysis-common/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-common/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/java-analysis-common/src/main/java/pers/ailurus/FileUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-common/src/main/java/pers/ailurus/FileUtil.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/java-analysis-common/src/main/java/pers/ailurus/NetUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-common/src/main/java/pers/ailurus/NetUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-database/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/DataOperator.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/DataOperator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/MPConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/MPDataOperator.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/ObjectGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/ObjectGenerator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/mapper/FeatureClassMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/mapper/FeatureClassMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/mapper/FeatureFileMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/mapper/FeatureFileMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/mapper/FeatureMethodMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/mapper/FeatureMethodMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/mapper/MavenRepositoryMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/mapper/MavenRepositoryMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/mapper/RelationClassMethodMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/mapper/RelationClassMethodMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/mapper/RelationFileClassMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/mapper/RelationFileClassMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/model/FeatureClass.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/model/FeatureClass.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/model/FeatureFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/model/FeatureFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/model/FeatureMethod.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/model/FeatureMethod.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/model/MavenRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/model/MavenRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/model/RelationClassMethod.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/model/RelationClassMethod.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/model/RelationFileClass.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/model/RelationFileClass.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/resources/mapper/FeatureClassMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-database/src/main/resources/mapper/FeatureClassMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/resources/mapper/FeatureFileMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-database/src/main/resources/mapper/FeatureFileMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/resources/mapper/FeatureMethodMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-database/src/main/resources/mapper/FeatureMethodMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/resources/mapper/MavenRepositoryMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-database/src/main/resources/mapper/MavenRepositoryMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/resources/mapper/RelationClassMethodMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-database/src/main/resources/mapper/RelationClassMethodMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/resources/mapper/RelationFileClassMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-database/src/main/resources/mapper/RelationFileClassMapper.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/CSVOperator.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-database/src/main/java/pers/ailurus/CSVOperator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java-analysis-extractor/src/main/java/pers/ailurus/Extractor.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-extractor/src/main/java/pers/ailurus/Extractor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/java-analysis-main/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-main/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-main/src/main/java/pers/ailurus/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-main/src/main/java/pers/ailurus/MavenMainWithMysql.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java-analysis-main/src/main/java/pers/ailurus/MavenMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-main/src/main/java/pers/ailurus/MavenMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -141,7 +120,7 @@
     <configuration name="MavenMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="pers.ailurus.MavenMain" />
       <module name="java-analysis-main" />
-      <option name="PROGRAM_PARAMETERS" value="C:\Users\wzy\Documents\iie_work\go_coroutine\maven\split_10000\maven_1.csv" />
+      <option name="PROGRAM_PARAMETERS" value="temp.csv" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="pers.ailurus.*" />
@@ -166,16 +145,30 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Test" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="pers.ailurus.Test" />
+      <module name="java-analysis-extractor" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="pers.ailurus.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <list>
-      <item itemvalue="Application.Main (1)" />
+      <item itemvalue="Application.Test" />
+      <item itemvalue="Application.Main" />
       <item itemvalue="Application.MavenMain" />
       <item itemvalue="Application.MavenMainWithMysql" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.MavenMain" />
+        <item itemvalue="Application.Test" />
         <item itemvalue="Application.MavenMainWithMysql" />
-        <item itemvalue="Application.Main (1)" />
         <item itemvalue="Application.MavenMainWithMysql" />
       </list>
     </recent_temporary>
@@ -209,7 +202,19 @@
       <workItem from="1664548927081" duration="3232000" />
       <workItem from="1664557034843" duration="18372000" />
       <workItem from="1664634552836" duration="14215000" />
-      <workItem from="1664696149554" duration="9409000" />
+      <workItem from="1664696149554" duration="12778000" />
+      <workItem from="1664725603162" duration="920000" />
+      <workItem from="1664756071879" duration="1850000" />
+      <workItem from="1664758555318" duration="703000" />
+      <workItem from="1664759391543" duration="140000" />
+      <workItem from="1664759555338" duration="731000" />
+      <workItem from="1664770977873" duration="971000" />
+      <workItem from="1664775019828" duration="1089000" />
+      <workItem from="1664800766039" duration="718000" />
+      <workItem from="1664802754009" duration="4370000" />
+      <workItem from="1665018437175" duration="133000" />
+      <workItem from="1665018586054" duration="662000" />
+      <workItem from="1665044932322" duration="1984000" />
     </task>
     <task id="LOCAL-00001" summary="20220926 完成特征提取函数与数据库操作方法">
       <created>1664195829233</created>
@@ -225,7 +230,14 @@
       <option name="project" value="LOCAL" />
       <updated>1664692469124</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="20221002 放弃保存到数据库的思路，采用保存到CSV文件，之后通过其他方式保存到mysql">
+      <created>1664720979765</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1664720979765</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -246,7 +258,8 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="20220926 完成特征提取函数与数据库操作方法" />
     <MESSAGE value="20221002 完成根据csv自动化提取特征的程序，效率10s/个" />
-    <option name="LAST_COMMIT_MESSAGE" value="20221002 完成根据csv自动化提取特征的程序，效率10s/个" />
+    <MESSAGE value="20221002 放弃保存到数据库的思路，采用保存到CSV文件，之后通过其他方式保存到mysql" />
+    <option name="LAST_COMMIT_MESSAGE" value="20221002 放弃保存到数据库的思路，采用保存到CSV文件，之后通过其他方式保存到mysql" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

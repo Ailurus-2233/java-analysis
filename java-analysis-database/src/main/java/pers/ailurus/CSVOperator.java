@@ -10,25 +10,29 @@ import java.util.Set;
 import static pers.ailurus.ObjectGenerator.*;
 
 public class CSVOperator {
+    private static final String savePath = "csv";
 
-    public static final int maxLine = 100000000;
-
-    private static final String savePath = "./csv";
-
-    private static File ffCSV = new File(String.format("%s%s%s", savePath, File.separator, "feature_file.csv"));
-    private static File fcCSV = new File(String.format("%s%s%s", savePath, File.separator, "feature_class.csv"));
-    private static File fmCSV = new File(String.format("%s%s%s", savePath, File.separator, "feature_method.csv"));
-    private static File rfcCSV = new File(String.format("%s%s%s", savePath, File.separator, "relation_file_class.csv"));
-    private static File rcmCSV = new File(String.format("%s%s%s", savePath, File.separator, "relation_class_method.csv"));
-    private static File mrCSV = new File(String.format("%s%s%s", savePath, File.separator, "maven_repository.csv"));
+    private static File ffCSV;
+    private static File fcCSV;
+    private static File fmCSV;
+    private static File rfcCSV;
+    private static File rcmCSV;
+    private static File mrCSV;
 
 
-    public static void initCSVFile() throws IOException {
+    public static void initCSVFile(String fileName) throws IOException {
 
-        File path = new File(savePath);
+        File path = new File(savePath + File.separator + fileName);
         if (!path.exists()) {
             path.mkdirs();
         }
+        ffCSV = new File(String.format("%s%s%s", path, File.separator, "feature_file.csv"));
+        fcCSV = new File(String.format("%s%s%s", path, File.separator, "feature_class.csv"));
+        fmCSV = new File(String.format("%s%s%s", path, File.separator, "feature_method.csv"));
+        rfcCSV = new File(String.format("%s%s%s", path, File.separator, "relation_file_class.csv"));
+        rcmCSV = new File(String.format("%s%s%s", path, File.separator, "relation_class_method.csv"));
+        mrCSV = new File(String.format("%s%s%s", path, File.separator, "maven_repository.csv"));
+
 
         if (!ffCSV.exists() && ffCSV.createNewFile()) {
             FileUtil.writeLine("md5,name,version,class_num,package_deep,package_num)", ffCSV.getAbsolutePath());

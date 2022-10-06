@@ -7,6 +7,7 @@ import pers.ailurus.model.AnalysisPackage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 import static pers.ailurus.Extractor.extract;
 import static pers.ailurus.FileUtil.*;
@@ -16,12 +17,12 @@ public class MavenMain {
     private static Logger logger = LoggerFactory.getLogger(MavenMain.class);
 
     public static void main(String[] args) {
-        String maven_path = args[0];
+        String mavenPath = args[0];
         List<String[]> info = null;
         try {
-            info = readCSVFile(maven_path);
+            info = readCSVFile(mavenPath);
             long sumTime = 0;
-            CSVOperator.initCSVFile();
+            CSVOperator.initCSVFile(getFileNameWithOutSuffix(mavenPath));
             for (int i = 1; i < info.size(); i++) {
                 long startTime = System.currentTimeMillis();
                 String[] line = info.get(i);
@@ -31,16 +32,32 @@ public class MavenMain {
                 String flag = line[3];
                 String path = "jar" + File.separator + name + "-" + version + ".jar";
                 String downloadName = name + "-" + version + ".jar";
-                if ("1".equals(flag)) {
+                if ("1".equals(flag) || "-1".equals(flag) || "-2".equals(flag)) {
                     logger.info(String.format("%s 已分析", downloadName));
                     continue;
                 }
                 logger.info(downloadName + " 开始分析");
                 dowlnoad(url, downloadName, "jar" + File.separator);
-
                 long time1 = System.currentTimeMillis();
                 logger.info(downloadName + " 下载耗时：" + (time1 - startTime) + "ms");
-                AnalysisPackage ap = extract(path);
+                AnalysisPackage ap = null;
+                try {
+                    ap = extract(path, 60);
+                } catch (TimeoutException e) {
+                    logger.warn(String.format("%s 分析超时", downloadName));
+                    line[3] = "-2";
+                    deleteFile(path);
+                    deleteFolder("jar" + File.separator + name + "-" + version);
+                    FileUtil.writeCSV(info, mavenPath);
+                    continue;
+                } catch (Exception e) {
+                    logger.warn(String.format("%s 分析异常", downloadName));
+                    line[3] = "-1";
+                    deleteFile(path);
+                    deleteFolder("jar" + File.separator + name + "-" + version);
+                    FileUtil.writeCSV(info, mavenPath);
+                    continue;
+                }
                 long time2 = System.currentTimeMillis();
                 logger.info(downloadName + " 分析耗时：" + (time2 - time1) + "ms");
                 CSVOperator.save(ObjectGenerator.getMavenRepository(name, version, url, path));
@@ -51,8 +68,8 @@ public class MavenMain {
                 long endTime = System.currentTimeMillis();
                 sumTime += endTime - startTime;
                 logger.info(downloadName + " 数据保存耗时：" + (endTime - time2) + "ms");
-                logger.info(downloadName + ".jar 分析完成，总耗时" + (endTime - startTime) + "ms");
-                break;
+                logger.info(downloadName + " 分析完成，总耗时" + (endTime - startTime) + "ms");
+                FileUtil.writeCSV(info, mavenPath);
             }
             logger.info("总分析数量：" + (info.size()-1));
             logger.info("总耗时：" + sumTime + "ms");
@@ -61,7 +78,7 @@ public class MavenMain {
             logger.info(e.getMessage());
         } finally {
             assert info != null;
-            FileUtil.writeCSV(info, maven_path);
+            FileUtil.writeCSV(info, mavenPath);
         }
     }
 }
