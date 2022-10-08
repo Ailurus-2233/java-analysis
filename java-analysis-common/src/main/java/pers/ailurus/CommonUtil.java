@@ -61,4 +61,21 @@ public class CommonUtil {
         return true;
     }
 
+
+    public static boolean isLinux() {
+        String os = System.getProperty("os.name");
+        return !os.toLowerCase().startsWith("win");
+    }
+
+
+    public static boolean runCmd(String[] cmd) {
+        try {
+            Process process = Runtime.getRuntime().exec(cmd);
+            process.waitFor();
+            return true;
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

@@ -3,13 +3,10 @@ package pers.ailurus;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvException;
-import com.opencsv.exceptions.CsvValidationException;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -44,18 +41,14 @@ public class FileUtil {
     public static boolean extractJarFile(String filePath, String target) throws RuntimeException {
         StringBuilder sb = new StringBuilder();
 
-//        sb.append("/usr/bin/7z x -y \"").append(filePath).append("\" -o\"").append(target).append("\"");
         sb.append("7z x -y \"").append(filePath).append("\" -o\"").append(target).append("\"");
-        try {
-//            Process process = Runtime.getRuntime().exec(new String[]{"sh", "-c", sb.toString()});
-            Process process = Runtime.getRuntime().exec(sb.toString());
-            process.waitFor();
-            return true;
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return false;
+        String[] cmd;
+        if (CommonUtil.isLinux()) {
+            cmd = new String[]{"/bin/sh", "-c", sb.toString()};
+        } else {
+            cmd = new String[]{"cmd", "/c", sb.toString()};
         }
-
+        return CommonUtil.runCmd(cmd);
     }
 
     /**
@@ -99,7 +92,7 @@ public class FileUtil {
                 return false;
             }
         } else {
-            file.delete();
+            deleteFile(filePath);
             try {
                 file.createNewFile();
             } catch (IOException e) {
@@ -125,24 +118,28 @@ public class FileUtil {
     public static void deleteFile(String filePath) {
         File file = new File(filePath);
         if (file.exists()) {
-            if (!file.delete()) {
-                System.out.println(filePath);
+            String[] cmd;
+            if (CommonUtil.isLinux()) {
+                cmd = new String[]{"/bin/sh", "-c", "rm -rf " + filePath};
+
+            } else {
+                cmd = new String[]{"cmd", "/c", "del /f /s /q " + filePath};
             }
+            CommonUtil.runCmd(cmd);
         }
     }
 
     public static void deleteFolder(String filePath) {
         File file = new File(filePath);
         if (file.exists()) {
-            File[] files = file.listFiles();
-            for (File f : files) {
-                if (f.isDirectory()) {
-                    deleteFolder(f.getAbsolutePath());
-                } else {
-                    deleteFile(f.getAbsolutePath());
-                }
+            String[] cmd;
+            if (CommonUtil.isLinux()) {
+                cmd = new String[]{"/bin/sh", "-c", "rm -rf " + filePath};
+
+            } else {
+                cmd = new String[]{"cmd", "/c", "rd /s /q " + filePath};
             }
-            deleteFile(file.getAbsolutePath());
+            CommonUtil.runCmd(cmd);
         }
     }
 

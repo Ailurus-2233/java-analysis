@@ -10,7 +10,7 @@ import java.util.List;
 
 import static pers.ailurus.Extractor.extract;
 import static pers.ailurus.FileUtil.*;
-import static pers.ailurus.NetUtil.dowlnoad;
+import static pers.ailurus.NetUtil.download;
 
 public class MavenMainWithMysql {
 
@@ -31,7 +31,7 @@ public class MavenMainWithMysql {
                 String path = "jar" + File.separator + name + "-" + version + ".jar";
                 String downloadName = name + "-" + version + ".jar";
                 logger.info(downloadName + " 开始分析");
-                dowlnoad(url, downloadName, "jar" + File.separator);
+                download(url, downloadName, "jar" + File.separator, 0);
                 long time1 = System.currentTimeMillis();
                 logger.info(downloadName + " 下载耗时：" + (time1 - startTime) + "ms");
                 DataOperator.insert(ObjectGenerator.getMavenRepository(name, version, url, path));

@@ -11,7 +11,7 @@ import java.util.concurrent.TimeoutException;
 
 import static pers.ailurus.Extractor.extract;
 import static pers.ailurus.FileUtil.*;
-import static pers.ailurus.NetUtil.dowlnoad;
+import static pers.ailurus.NetUtil.download;
 
 public class MavenMain {
     private static Logger logger = LoggerFactory.getLogger(MavenMain.class);
@@ -37,7 +37,9 @@ public class MavenMain {
                     continue;
                 }
                 logger.info(downloadName + " 开始分析");
-                dowlnoad(url, downloadName, "jar" + File.separator);
+                // 使用国内源
+                url = url.replace("https://repo1.maven.org/maven2/", "https://maven.aliyun.com/repository/public/");
+                download(url, downloadName, "jar" + File.separator, 0);
                 long time1 = System.currentTimeMillis();
                 logger.info(downloadName + " 下载耗时：" + (time1 - startTime) + "ms");
                 AnalysisPackage ap = null;
@@ -69,6 +71,7 @@ public class MavenMain {
                 sumTime += endTime - startTime;
                 logger.info(downloadName + " 数据保存耗时：" + (endTime - time2) + "ms");
                 logger.info(downloadName + " 分析完成，总耗时" + (endTime - startTime) + "ms");
+                logger.info(String.format("已完成进度：%d/%d, 预计剩余时间：%ds", i + 1, info.size(), (info.size() - i) * sumTime / i / 1000));
                 FileUtil.writeCSV(info, mavenPath);
             }
             logger.info("总分析数量：" + (info.size()-1));

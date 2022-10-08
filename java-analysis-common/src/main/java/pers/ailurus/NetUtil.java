@@ -8,9 +8,9 @@ import java.io.File;
 import java.net.URL;
 
 public class NetUtil {
-    private static Logger logger = LoggerFactory.getLogger(NetUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(NetUtil.class);
 
-    public static boolean dowlnoad(String url, String fileName, String dir, int count) {
+    public static boolean download(String url, String fileName, String dir, int count) {
         if (count == 5) {
             logger.warn("下载失败，请检查下载链接：" + url);
             return false;
@@ -24,7 +24,7 @@ public class NetUtil {
             FileUtils.copyURLToFile(http, new File(dir + File.separator + fileName));
         } catch (Exception e) {
             logger.warn("网络异常，重新请求下载：" + url);
-            dowlnoad(url, fileName, dir, count + 1);
+            download(url, fileName, dir, count + 1);
         }
         return true;
     }
