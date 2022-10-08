@@ -71,7 +71,7 @@ public class MavenMain {
                 sumTime += endTime - startTime;
                 logger.info(downloadName + " 数据保存耗时：" + (endTime - time2) + "ms");
                 logger.info(downloadName + " 分析完成，总耗时" + (endTime - startTime) + "ms");
-                logger.info(String.format("已完成进度：%d/%d, 预计剩余时间：%ds", i + 1, info.size(), (info.size() - i) * sumTime / i / 1000));
+                logger.info(String.format("已完成进度：%d/%d, 预计剩余时间：%ds", i, info.size()-1, (info.size() - i) * (endTime - startTime) / 1000));
                 FileUtil.writeCSV(info, mavenPath);
             }
             logger.info("总分析数量：" + (info.size()-1));
