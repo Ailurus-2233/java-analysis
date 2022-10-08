@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff6aae35-e46e-4d40-ab45-e70f2693fee7" name="Changes" comment="20221008 最终执行版本 v1.0.0">
+    <list default="true" id="ff6aae35-e46e-4d40-ab45-e70f2693fee7" name="Changes" comment="20221008 修复部分日志的显示错误">
+      <change beforePath="$PROJECT_DIR$/.idea/csv-plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-plugin.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-main/src/main/java/pers/ailurus/MavenMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-main/src/main/java/pers/ailurus/MavenMain.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -201,7 +202,7 @@
       <workItem from="1665044932322" duration="3130000" />
       <workItem from="1665222549537" duration="1688000" />
       <workItem from="1665224256361" duration="1374000" />
-      <workItem from="1665225643134" duration="1100000" />
+      <workItem from="1665225643134" duration="2343000" />
     </task>
     <task id="LOCAL-00001" summary="20220926 完成特征提取函数与数据库操作方法">
       <created>1664195829233</created>
@@ -245,7 +246,14 @@
       <option name="project" value="LOCAL" />
       <updated>1665225764110</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="20221008 修复部分日志的显示错误">
+      <created>1665226813079</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1665226813079</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -270,7 +278,8 @@
     <MESSAGE value="20221006 修复一部分bug" />
     <MESSAGE value="20221008 修改命令执行，智能的识别linux还是win的运行环境" />
     <MESSAGE value="20221008 最终执行版本 v1.0.0" />
-    <option name="LAST_COMMIT_MESSAGE" value="20221008 最终执行版本 v1.0.0" />
+    <MESSAGE value="20221008 修复部分日志的显示错误" />
+    <option name="LAST_COMMIT_MESSAGE" value="20221008 修复部分日志的显示错误" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

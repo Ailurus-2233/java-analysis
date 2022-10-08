@@ -35,7 +35,7 @@ public class CSVOperator {
 
 
         if (!ffCSV.exists() && ffCSV.createNewFile()) {
-            FileUtil.writeLine("md5,name,version,class_num,package_deep,package_num)", ffCSV.getAbsolutePath());
+            FileUtil.writeLine("md5,name,version,class_num,package_deep,package_num", ffCSV.getAbsolutePath());
         }
         if (!fcCSV.exists() && fcCSV.createNewFile()) {
             FileUtil.writeLine("md5,modifier,interface_num,has_super_class,field_num,method_num,dep_class_num,be_dep_num", fcCSV.getAbsolutePath());
