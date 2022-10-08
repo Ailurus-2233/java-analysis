@@ -42,13 +42,7 @@ public class FileUtil {
         StringBuilder sb = new StringBuilder();
 
         sb.append("7z x -y \"").append(filePath).append("\" -o\"").append(target).append("\"");
-        String[] cmd;
-        if (CommonUtil.isLinux()) {
-            cmd = new String[]{"/bin/sh", "-c", sb.toString()};
-        } else {
-            cmd = new String[]{"cmd", "/c", sb.toString()};
-        }
-        return CommonUtil.runCmd(cmd);
+        return CommonUtil.runCmd(sb.toString());
     }
 
     /**
@@ -118,12 +112,12 @@ public class FileUtil {
     public static void deleteFile(String filePath) {
         File file = new File(filePath);
         if (file.exists()) {
-            String[] cmd;
+            String cmd;
             if (CommonUtil.isLinux()) {
-                cmd = new String[]{"/bin/sh", "-c", "rm -rf " + filePath};
+                cmd = String.format("rm -rf %s", filePath);
 
             } else {
-                cmd = new String[]{"cmd", "/c", "del /f /s /q " + filePath};
+                cmd = String.format("del /f /s /q %s", filePath);
             }
             CommonUtil.runCmd(cmd);
         }
@@ -132,12 +126,12 @@ public class FileUtil {
     public static void deleteFolder(String filePath) {
         File file = new File(filePath);
         if (file.exists()) {
-            String[] cmd;
+            String cmd;
             if (CommonUtil.isLinux()) {
-                cmd = new String[]{"/bin/sh", "-c", "rm -rf " + filePath};
+                cmd = String.format("rm -rf %s", filePath);
 
             } else {
-                cmd = new String[]{"cmd", "/c", "rd /s /q " + filePath};
+                cmd = String.format("rd /s /q %s", filePath);
             }
             CommonUtil.runCmd(cmd);
         }

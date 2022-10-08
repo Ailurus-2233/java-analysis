@@ -68,7 +68,13 @@ public class CommonUtil {
     }
 
 
-    public static boolean runCmd(String[] cmd) {
+    public static boolean runCmd(String inputCmd) {
+        String[] cmd;
+        if (isLinux()) {
+            cmd = new String[]{"/bin/sh", "-c", inputCmd};
+        } else {
+            cmd = new String[]{"cmd", "/c", inputCmd};
+        }
         try {
             Process process = Runtime.getRuntime().exec(cmd);
             process.waitFor();

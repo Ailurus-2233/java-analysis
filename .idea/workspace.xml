@@ -4,14 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff6aae35-e46e-4d40-ab45-e70f2693fee7" name="Changes" comment="20221006 修复一部分bug">
+    <list default="true" id="ff6aae35-e46e-4d40-ab45-e70f2693fee7" name="Changes" comment="20221008 修改命令执行，智能的识别linux还是win的运行环境">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/java-analysis-common/src/main/java/pers/ailurus/CommonUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-common/src/main/java/pers/ailurus/CommonUtil.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/java-analysis-common/src/main/java/pers/ailurus/FileUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-common/src/main/java/pers/ailurus/FileUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-common/src/main/java/pers/ailurus/NetUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-common/src/main/java/pers/ailurus/NetUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-main/src/main/java/pers/ailurus/MavenMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-main/src/main/java/pers/ailurus/MavenMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/java-analysis-main/src/main/java/pers/ailurus/MavenMainWithMysql.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-main/src/main/java/pers/ailurus/MavenMainWithMysql.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/temp.csv" beforeDir="false" afterPath="$PROJECT_DIR$/temp.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,7 +55,7 @@
     "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "preferences.sourceCode"
+    "settings.editor.selected.configurable": "preferences.lookFeel"
   },
   "keyToStringList": {
     "DatabaseDriversLRU": [
@@ -205,7 +202,8 @@
       <workItem from="1665018586054" duration="662000" />
       <workItem from="1665044932322" duration="3130000" />
       <workItem from="1665222549537" duration="1688000" />
-      <workItem from="1665224256361" duration="789000" />
+      <workItem from="1665224256361" duration="1374000" />
+      <workItem from="1665225643134" duration="42000" />
     </task>
     <task id="LOCAL-00001" summary="20220926 完成特征提取函数与数据库操作方法">
       <created>1664195829233</created>
@@ -235,7 +233,14 @@
       <option name="project" value="LOCAL" />
       <updated>1665048492289</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="20221008 修改命令执行，智能的识别linux还是win的运行环境">
+      <created>1665225199240</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1665225199240</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -258,7 +263,8 @@
     <MESSAGE value="20221002 完成根据csv自动化提取特征的程序，效率10s/个" />
     <MESSAGE value="20221002 放弃保存到数据库的思路，采用保存到CSV文件，之后通过其他方式保存到mysql" />
     <MESSAGE value="20221006 修复一部分bug" />
-    <option name="LAST_COMMIT_MESSAGE" value="20221006 修复一部分bug" />
+    <MESSAGE value="20221008 修改命令执行，智能的识别linux还是win的运行环境" />
+    <option name="LAST_COMMIT_MESSAGE" value="20221008 修改命令执行，智能的识别linux还是win的运行环境" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
