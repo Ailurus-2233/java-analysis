@@ -39,6 +39,13 @@ public class MavenMain {
                 logger.info(downloadName + " 开始分析");
                 // 使用国内源
                 url = url.replace("https://repo1.maven.org/maven2/", "https://maven.aliyun.com/repository/public/");
+                long size = NetUtil.getFileLength(url);
+                if (size > 1024 * 1024 * 10) {
+                    logger.info(String.format("%s 大小超过10M，跳过分析", downloadName));
+                    line[3] = "-3";
+                    FileUtil.writeCSV(info, mavenPath);
+                    continue;
+                }
                 download(url, downloadName, "jar" + File.separator, 0);
                 long time1 = System.currentTimeMillis();
                 logger.info(downloadName + " 下载耗时：" + (time1 - startTime) + "ms");

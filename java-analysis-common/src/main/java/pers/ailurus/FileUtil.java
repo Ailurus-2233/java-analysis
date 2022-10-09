@@ -129,7 +129,6 @@ public class FileUtil {
             String cmd;
             if (CommonUtil.isLinux()) {
                 cmd = String.format("rm -rf %s", filePath);
-
             } else {
                 cmd = String.format("rd /s /q %s", filePath);
             }
