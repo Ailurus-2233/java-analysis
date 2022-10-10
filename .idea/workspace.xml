@@ -4,11 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff6aae35-e46e-4d40-ab45-e70f2693fee7" name="Changes" comment="20221008 修复file_feature存储标题的错误">
-      <change beforePath="$PROJECT_DIR$/.idea/csv-plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-plugin.xml" afterDir="false" />
+    <list default="true" id="ff6aae35-e46e-4d40-ab45-e70f2693fee7" name="Changes" comment="20221009 设置超过10M文件不下载">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/java-analysis-common/src/main/java/pers/ailurus/FileUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-common/src/main/java/pers/ailurus/FileUtil.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/java-analysis-common/src/main/java/pers/ailurus/NetUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-common/src/main/java/pers/ailurus/NetUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java-analysis-extractor/src/main/java/pers/ailurus/Extractor.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-extractor/src/main/java/pers/ailurus/Extractor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/java-analysis-main/src/main/java/pers/ailurus/MavenMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/java-analysis-main/src/main/java/pers/ailurus/MavenMain.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -205,7 +205,7 @@
       <workItem from="1665222549537" duration="1688000" />
       <workItem from="1665224256361" duration="1374000" />
       <workItem from="1665225643134" duration="3724000" />
-      <workItem from="1665280288359" duration="3476000" />
+      <workItem from="1665280288359" duration="10309000" />
     </task>
     <task id="LOCAL-00001" summary="20220926 完成特征提取函数与数据库操作方法">
       <created>1664195829233</created>
@@ -263,7 +263,14 @@
       <option name="project" value="LOCAL" />
       <updated>1665230230724</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="20221009 设置超过10M文件不下载">
+      <created>1665299342945</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1665299342945</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -290,7 +297,9 @@
     <MESSAGE value="20221008 最终执行版本 v1.0.0" />
     <MESSAGE value="20221008 修复部分日志的显示错误" />
     <MESSAGE value="20221008 修复file_feature存储标题的错误" />
-    <option name="LAST_COMMIT_MESSAGE" value="20221008 修复file_feature存储标题的错误" />
+    <MESSAGE value="20221008 设置超过10M文件不下载" />
+    <MESSAGE value="20221009 设置超过10M文件不下载" />
+    <option name="LAST_COMMIT_MESSAGE" value="20221009 设置超过10M文件不下载" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

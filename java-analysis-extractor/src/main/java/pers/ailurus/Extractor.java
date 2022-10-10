@@ -30,15 +30,15 @@ public class Extractor {
             return future.get(limitSecond, TimeUnit.SECONDS);
         } catch (Exception e) {
             future.cancel(true);
-            throw new TimeoutException("任务超时");
+            throw new TimeoutException("Timeout");
         } finally {
             exeServices.shutdown();
         }
     }
 
-    public static AnalysisPackage extract(String filePath) throws RuntimeException{
+    public static AnalysisPackage extract(String filePath) {
         if (!FileUtil.isJarFile(filePath)) {
-            throw new RuntimeException("不是jar文件");
+            throw new RuntimeException("Not jar file");
         }
         AnalysisPackage ap = new AnalysisPackage();
         String target = FileUtil.getTargetPath(filePath);
@@ -48,7 +48,7 @@ public class Extractor {
             try {
                 ap.setMd5(FileUtil.getFileMd5(filePath));
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("Get md5 error, check your file path");
             }
         }
         return ap;

@@ -38,7 +38,7 @@ public class FileUtil {
      * @return boolean
      * @throws RuntimeException 运行时异常
      */
-    public static boolean extractJarFile(String filePath, String target) throws RuntimeException {
+    public static boolean extractJarFile(String filePath, String target) {
         StringBuilder sb = new StringBuilder();
 
         sb.append("7z x -y \"").append(filePath).append("\" -o\"").append(target).append("\"");

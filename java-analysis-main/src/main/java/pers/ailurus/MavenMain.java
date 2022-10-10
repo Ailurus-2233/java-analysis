@@ -12,83 +12,106 @@ import java.util.concurrent.TimeoutException;
 import static pers.ailurus.Extractor.extract;
 import static pers.ailurus.FileUtil.*;
 import static pers.ailurus.NetUtil.download;
+import static pers.ailurus.NetUtil.downloadWithCheckSize;
 
 public class MavenMain {
     private static Logger logger = LoggerFactory.getLogger(MavenMain.class);
+    static List<String[]> info;
+    static String mavenPath;
 
     public static void main(String[] args) {
-        String mavenPath = args[0];
-        List<String[]> info = null;
+        mavenPath = args[0];
         try {
-            info = readCSVFile(mavenPath);
             long sumTime = 0;
+            int analysisCount = 0;
+
+            // 读取maven仓库信息
+            info = readCSVFile(mavenPath);
+
+            // 初始化数据存储文件
             CSVOperator.initCSVFile(getFileNameWithOutSuffix(mavenPath));
+
+            // 逐个分析
             for (int i = 1; i < info.size(); i++) {
                 long startTime = System.currentTimeMillis();
+
+                // 1. 获取 TPL 基本信息 名称，版本，下载地址，当前状态，保存路径
                 String[] line = info.get(i);
                 String name = line[0];
                 String version = line[1];
                 String url = line[2];
                 String flag = line[3];
-                String path = "jar" + File.separator + name + "-" + version + ".jar";
-                String downloadName = name + "-" + version + ".jar";
-                if ("1".equals(flag) || "-1".equals(flag) || "-2".equals(flag)) {
-                    logger.info(String.format("%s 已分析", downloadName));
+                String downloadName = String.format("%s-%s.jar", name, version);
+                String path = String.format("jar%s%s", File.separator, downloadName);
+
+                // 判断是否分析过，或者存在其他问题
+                if ("1".equals(flag) || "-1".equals(flag) || "-2".equals(flag) || "-3".equals(flag)) {
+                    logger.info(String.format("[%s] Analyzed.", downloadName));
                     continue;
                 }
-                logger.info(downloadName + " 开始分析");
+
+                // 2. 下载第TPL到本地
+                logger.info(String.format("[%s] Start analysis.", downloadName));
                 // 使用国内源
-                url = url.replace("https://repo1.maven.org/maven2/", "https://maven.aliyun.com/repository/public/");
-                long size = NetUtil.getFileLength(url);
-                if (size > 1024 * 1024 * 10) {
-                    logger.info(String.format("%s 大小超过10M，跳过分析", downloadName));
-                    line[3] = "-3";
-                    FileUtil.writeCSV(info, mavenPath);
+                String urlCN = url.replace("https://repo1.maven.org/maven2/", "https://maven.aliyun.com/repository/public/");
+                boolean downloadResult = downloadWithCheckSize(urlCN, downloadName, "jar", 1024 * 1024 * 20);
+                if (!downloadResult) {
+                    downloadResult = downloadWithCheckSize(url, downloadName, "jar", 1024 * 1024 * 20);
+                }
+                if (!downloadResult) {
+                    stopAnalysis(path, "-3", i);
                     continue;
                 }
-                download(url, downloadName, "jar" + File.separator, 0);
                 long time1 = System.currentTimeMillis();
-                logger.info(downloadName + " 下载耗时：" + (time1 - startTime) + "ms");
+                logger.info(String.format("[%s] Download finished, time: %d ms.", downloadName, time1 - startTime));
+
+                // 3. 分析本地TPL
                 AnalysisPackage ap = null;
                 try {
-                    ap = extract(path, 60);
+                    ap = extract(path, 120);
                 } catch (TimeoutException e) {
-                    logger.warn(String.format("%s 分析超时", downloadName));
-                    line[3] = "-2";
-                    deleteFile(path);
-                    deleteFolder("jar" + File.separator + name + "-" + version);
-                    FileUtil.writeCSV(info, mavenPath);
+                    logger.error(String.format("[%s] Analysis timeout.", downloadName));
+                    stopAnalysis(path, "-2", i);
                     continue;
                 } catch (Exception e) {
-                    logger.warn(String.format("%s 分析异常", downloadName));
-                    line[3] = "-1";
-                    deleteFile(path);
-                    deleteFolder("jar" + File.separator + name + "-" + version);
-                    FileUtil.writeCSV(info, mavenPath);
+                    logger.error(String.format("[%s] Execution error.", downloadName));
+                    stopAnalysis(path, "-1", i);
                     continue;
                 }
                 long time2 = System.currentTimeMillis();
-                logger.info(downloadName + " 分析耗时：" + (time2 - time1) + "ms");
+                logger.info(String.format("[%s] Analysis finished, time: %d ms.", downloadName, time2 - time1));
+
+                // 4. 保存分析数据
                 CSVOperator.save(ObjectGenerator.getMavenRepository(name, version, url, path));
                 CSVOperator.saveAnalysisPackage(name, version, ap);
-                deleteFile(path);
-                deleteFolder("jar" + File.separator + name + "-" + version);
-                line[3] = "1";
+
+                // 5. 分析结束并保存状态
+                stopAnalysis(path, "1", i);
+
+                // 6. 其他信息统计
+                analysisCount++;
                 long endTime = System.currentTimeMillis();
                 sumTime += endTime - startTime;
-                logger.info(downloadName + " 数据保存耗时：" + (endTime - time2) + "ms");
-                logger.info(downloadName + " 分析完成，总耗时" + (endTime - startTime) + "ms");
-                logger.info(String.format("已完成进度：%d/%d, 预计剩余时间：%ds", i, info.size()-1, (info.size() - i) * (endTime - startTime) / 1000));
-                FileUtil.writeCSV(info, mavenPath);
+                logger.info(String.format("[%s] Data saved, time: %d ms.", downloadName, endTime - time2));
+                logger.info(String.format("[%s] Total time: %d ms.", downloadName, endTime - startTime));
+                logger.info(String.format("Progress: %d/%d, remain time: %d s.", i, info.size()-1, (info.size() - 1 - i) * (endTime - startTime) / 1000));
             }
-            logger.info("总分析数量：" + (info.size()-1));
-            logger.info("总耗时：" + sumTime + "ms");
-            logger.info("平均耗时：" + sumTime / (info.size()-1) + "ms");
+            logger.info(String.format("Total number of TPL: %d.", analysisCount));
+            logger.info(String.format("Total time: %d s.", sumTime / 1000));
+            logger.info(String.format("Average time: %d ms.", sumTime / (analysisCount == 0 ? 1 : analysisCount)));
         } catch (IOException e) {
-            logger.info(e.getMessage());
+            logger.error(e.getMessage());
         } finally {
             assert info != null;
             FileUtil.writeCSV(info, mavenPath);
         }
     }
+
+    public static void stopAnalysis(String tplPath, String flag, int index) {
+        info.get(index)[3] = flag;
+        deleteFile(tplPath);
+        deleteFolder(tplPath.replace(".jar", ""));
+        FileUtil.writeCSV(info, mavenPath);
+    }
+
 }

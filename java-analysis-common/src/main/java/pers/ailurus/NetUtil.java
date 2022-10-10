@@ -13,8 +13,8 @@ public class NetUtil {
     private static final Logger logger = LoggerFactory.getLogger(NetUtil.class);
 
     public static boolean download(String url, String fileName, String dir, int count) {
-        if (count == 5) {
-            logger.warn("下载失败，请检查下载链接：" + url);
+        if (count == 3) {
+            logger.error(String.format("[%s] Unable to download.", fileName));
             return false;
         }
         try {
@@ -25,8 +25,37 @@ public class NetUtil {
             }
             FileUtils.copyURLToFile(http, new File(dir + File.separator + fileName));
         } catch (Exception e) {
-            logger.warn("网络异常，重新请求下载：" + url);
-            download(url, fileName, dir, count + 1);
+            return download(url, fileName, dir, count + 1);
+        }
+        return true;
+    }
+
+
+    public static boolean downloadWithCheckSize(String url, String fileName, String dir, int checkSize) {
+        HttpURLConnection conn = null;
+        try {
+            URL http = new URL(url);
+            conn = (HttpURLConnection) http.openConnection();
+            conn.setRequestMethod("HEAD");
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows 7; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.73 Safari/537.36 YNoteCef/5.8.0.1 (Windows)");
+            long size = conn.getContentLength();
+            if (size == -1) {
+                logger.info(String.format("[%s] Unable to obtain information of TPL file, skip the analysis step", fileName));
+                return false;
+            }
+            if (size > checkSize) {
+                logger.info(String.format("[%s] The TPL file size exceeds limit , skip the analysis step", fileName));
+                return false;
+            }
+            File dirFile = new File(dir);
+            if (!dirFile.exists()) {
+                dirFile.mkdirs();
+            }
+            FileUtils.copyURLToFile(http, new File(dir + File.separator + fileName));
+        } catch (Exception e) {
+            return download(url, fileName, dir, 1);
+        } finally {
+            conn.disconnect();
         }
         return true;
     }
