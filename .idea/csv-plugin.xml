@@ -31,6 +31,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\csv\temp\relation_class_method.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\csv\temp\relation_file_class.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\temp.csv">
           <value>
             <Attribute>
