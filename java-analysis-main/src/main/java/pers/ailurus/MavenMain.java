@@ -99,6 +99,7 @@ public class MavenMain {
             logger.info(String.format("Total number of TPL: %d.", analysisCount));
             logger.info(String.format("Total time: %d s.", sumTime / 1000));
             logger.info(String.format("Average time: %d ms.", sumTime / (analysisCount == 0 ? 1 : analysisCount)));
+            resultCount(mavenPath);
         } catch (IOException e) {
             logger.error(e.getMessage());
         } finally {
@@ -112,6 +113,28 @@ public class MavenMain {
         deleteFile(tplPath);
         deleteFolder(tplPath.replace(".jar", ""));
         FileUtil.writeCSV(info, mavenPath);
+    }
+
+    public static void resultCount(String mavenPath) {
+        int finished = 0;
+        int timeout = 0;
+        int error = 0;
+        int notDownload = 0;
+        for (int i = 1; i < info.size(); i++) {
+            String flag = info.get(i)[3];
+            if ("1".equals(flag)) {
+                finished++;
+            } else if ("-1".equals(flag)) {
+                error++;
+            } else if ("-2".equals(flag)) {
+                timeout++;
+            } else if ("-3".equals(flag)) {
+                notDownload++;
+            }
+        }
+        logger.info(String.format("Finished: %d, Error: %d, Timeout: %d, Not Download: %d", finished, error, timeout, notDownload));
+
+        FileUtil.writeLine(String.format("%d,%d,%d,%d\n", finished, error, timeout, notDownload), mavenPath.replace(".csv", "_result.txt"));
     }
 
 }
