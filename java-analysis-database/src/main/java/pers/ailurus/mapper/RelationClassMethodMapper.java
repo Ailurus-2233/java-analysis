@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Param;
 import pers.ailurus.model.RelationClassMethod;
 
 public interface RelationClassMethodMapper {
+    List<String> selectClassMd5ByMethodMd5(String methodMd5);
+
     int deleteByPrimaryKey(@Param("classMd5") String classMd5, @Param("methodMd5") String methodMd5);
 
     int insert(RelationClassMethod record);

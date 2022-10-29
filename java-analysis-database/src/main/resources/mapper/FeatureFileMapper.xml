@@ -22,6 +22,19 @@
     from feature_file
     where md5 = #{md5,jdbcType=VARCHAR}
   </select>
+  <select id="selectByNumberFeature" parameterType="pers.ailurus.model.FeatureFile" resultMap="BaseResultMap">
+    select * from feature_file
+    where class_num = #{classNum,jdbcType=INTEGER} 
+    and package_deep = #{packageDeep,jdbcType=INTEGER} 
+    and package_num = #{packageNum,jdbcType=INTEGER}
+  </select>
+  <select id="selectByNumberFeatureFuzzy" parameterType="pers.ailurus.model.FeatureFile" resultMap="BaseResultMap">
+    select * from feature_file
+    where 
+    class_num between #{classNum - 10,jdbcType=INTEGER} and #{classNum + 10,jdbcType=INTEGER} and 
+    and package_deep > #{packageDeep - 2,jdbcType=INTEGER} and #{packageDeep + 2,jdbcType=INTEGER} and
+    and package_num = #{packageNum - 2,jdbcType=INTEGER} and #{packageNum + 2,jdbcType=INTEGER}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     <!--@mbg.generated-->
     delete from feature_file

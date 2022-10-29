@@ -16,6 +16,10 @@ public interface FeatureClassMapper {
     int insertSelective(FeatureClass record);
 
     FeatureClass selectByPrimaryKey(String md5);
+    
+    List<FeatureClass> selectByNumberFeature(FeatureClass record);
+    
+    List<FeatureClass> selectByNumberFeatureFuzzy(FeatureClass record);
 
     int updateByPrimaryKeySelective(FeatureClass record);
 

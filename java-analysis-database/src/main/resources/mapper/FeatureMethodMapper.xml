@@ -2,8 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pers.ailurus.mapper.FeatureMethodMapper">
   <resultMap id="BaseResultMap" type="pers.ailurus.model.FeatureMethod">
-    <!--@mbg.generated-->
-    <!--@Table feature_method-->
     <id column="md5" jdbcType="VARCHAR" property="md5" />
     <result column="modifier" jdbcType="INTEGER" property="modifier" />
     <result column="args_num" jdbcType="INTEGER" property="argsNum" />
@@ -11,30 +9,45 @@
     <result column="cfg_finger" jdbcType="VARCHAR" property="cfgFinger" />
   </resultMap>
   <sql id="Base_Column_List">
-    <!--@mbg.generated-->
     md5, modifier, args_num, return_type, cfg_finger
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    <!--@mbg.generated-->
     select 
     <include refid="Base_Column_List" />
     from feature_method
     where md5 = #{md5,jdbcType=VARCHAR}
   </select>
+  <select id="selectByFeature" parameterType="pers.ailurus.model.FeatureMethod" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from feature_method
+    where modifier = #{modifier,jdbcType=INTEGER}
+    and args_num = #{argsNum,jdbcType=INTEGER}
+    and return_type = #{returnType,jdbcType=INTEGER}
+    and cfg_finger = #{cfgFinger,jdbcType=VARCHAR}
+  </select>
+  <select id="selectClassMd5ByFeature" parameterType="pers.ailurus.model.FeatureMethod" resultMap="String">
+    select class_md5 from relation_class_method
+    where method_md5 in (
+      select md5
+      from feature_method
+      where modifier = #{modifier,jdbcType=INTEGER}
+      and args_num = #{argsNum,jdbcType=INTEGER}
+      and return_type = #{returnType,jdbcType=INTEGER}
+      and cfg_finger = #{cfgFinger,jdbcType=VARCHAR}
+    )
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    <!--@mbg.generated-->
     delete from feature_method
     where md5 = #{md5,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="pers.ailurus.model.FeatureMethod">
-    <!--@mbg.generated-->
     insert into feature_method (md5, modifier, args_num, 
       return_type, cfg_finger)
     values (#{md5,jdbcType=VARCHAR}, #{modifier,jdbcType=INTEGER}, #{argsNum,jdbcType=INTEGER}, 
       #{returnType,jdbcType=INTEGER}, #{cfgFinger,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="pers.ailurus.model.FeatureMethod">
-    <!--@mbg.generated-->
     insert into feature_method
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="md5 != null">
@@ -72,7 +85,6 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="pers.ailurus.model.FeatureMethod">
-    <!--@mbg.generated-->
     update feature_method
     <set>
       <if test="modifier != null">
@@ -91,7 +103,6 @@
     where md5 = #{md5,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="pers.ailurus.model.FeatureMethod">
-    <!--@mbg.generated-->
     update feature_method
     set modifier = #{modifier,jdbcType=INTEGER},
       args_num = #{argsNum,jdbcType=INTEGER},
@@ -100,7 +111,6 @@
     where md5 = #{md5,jdbcType=VARCHAR}
   </update>
   <update id="updateBatch" parameterType="java.util.List">
-    <!--@mbg.generated-->
     update feature_method
     <trim prefix="set" suffixOverrides=",">
       <trim prefix="modifier = case" suffix="end,">
@@ -130,7 +140,6 @@
     </foreach>
   </update>
   <update id="updateBatchSelective" parameterType="java.util.List">
-    <!--@mbg.generated-->
     update feature_method
     <trim prefix="set" suffixOverrides=",">
       <trim prefix="modifier = case" suffix="end,">
@@ -168,7 +177,6 @@
     </foreach>
   </update>
   <insert id="batchInsert" parameterType="map">
-    <!--@mbg.generated-->
     insert into feature_method
     (md5, modifier, args_num, return_type, cfg_finger)
     values
@@ -178,7 +186,6 @@
     </foreach>
   </insert>
   <insert id="insertOrUpdate" parameterType="pers.ailurus.model.FeatureMethod">
-    <!--@mbg.generated-->
     insert into feature_method
     (md5, modifier, args_num, return_type, cfg_finger)
     values
@@ -192,7 +199,6 @@
     cfg_finger = #{cfgFinger,jdbcType=VARCHAR}
   </insert>
   <insert id="insertOrUpdateSelective" parameterType="pers.ailurus.model.FeatureMethod">
-    <!--@mbg.generated-->
     insert into feature_method
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="md5 != null">

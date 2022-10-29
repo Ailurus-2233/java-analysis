@@ -11,7 +11,6 @@ import java.util.concurrent.TimeoutException;
 
 import static pers.ailurus.Extractor.extract;
 import static pers.ailurus.FileUtil.*;
-import static pers.ailurus.NetUtil.download;
 import static pers.ailurus.NetUtil.downloadWithCheckSize;
 
 public class MavenMain {

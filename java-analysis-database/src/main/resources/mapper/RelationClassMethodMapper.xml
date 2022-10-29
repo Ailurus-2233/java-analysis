@@ -11,6 +11,11 @@
     <!--@mbg.generated-->
     class_md5, method_md5
   </sql>
+  <select id="selectClassMd5ByMethodMd5" parameterType="String" resultType="String">
+    select class_md5
+    from relation_class_method
+    where method_md5 = #{methodMd5,jdbcType=VARCHAR}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="map">
     <!--@mbg.generated-->
     delete from relation_class_method

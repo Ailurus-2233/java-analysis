@@ -17,6 +17,10 @@ public interface FeatureFileMapper {
 
     FeatureFile selectByPrimaryKey(String md5);
 
+    List<FeatureFile> selectByNumberFeature(FeatureFile record);
+
+    List<FeatureFile> selectByNumberFeatureFuzzy(FeatureFile record);
+
     int updateByPrimaryKeySelective(FeatureFile record);
 
     int updateByPrimaryKey(FeatureFile record);

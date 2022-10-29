@@ -25,6 +25,30 @@
     from feature_class
     where md5 = #{md5,jdbcType=VARCHAR}
   </select>
+  <select id="selectByNumberFeature" parameterType="pers.ailurus.model.FeatureClass" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from feature_class
+    where modifier = #{modifier,jdbcType=INTEGER}
+    and interface_num = #{interfaceNum,jdbcType=INTEGER}
+    and has_super_class = #{hasSuperClass,jdbcType=INTEGER}
+    and field_num = #{fieldNum,jdbcType=INTEGER}
+    and method_num = #{methodNum,jdbcType=INTEGER}
+    and dep_class_num = #{depClassNum,jdbcType=INTEGER}
+  </select>
+  <select id="selectByNumberFeatureFuzzy" parameterType="pers.ailurus.model.FeatureClass" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from feature_class
+    where modifier = #{modifier,jdbcType=INTEGER}
+    and interface_num between #{interfaceNum - 1,jdbcType=INTEGER} and #{interfaceNum + 1,jdbcType=INTEGER}
+    and has_super_class = #{hasSuperClass,jdbcType=INTEGER}
+    and field_num between #{fieldNum - 2,jdbcType=INTEGER} and #{fieldNum + 2,jdbcType=INTEGER}
+    and method_num between #{methodNum - 2,jdbcType=INTEGER} and #{methodNum + 2,jdbcType=INTEGER}
+    and dep_class_num between #{depClassNum - 5,jdbcType=INTEGER} and #{depClassNum + 5,jdbcType=INTEGER}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     <!--@mbg.generated-->
     delete from feature_class

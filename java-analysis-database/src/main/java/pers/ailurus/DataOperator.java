@@ -12,6 +12,7 @@ import pers.ailurus.model.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -148,6 +149,19 @@ public class DataOperator {
             insert(rfc);
         }
         session.commit();
+    }
+
+
+    public static List<FeatureFile> selectFeatureFileByNumberFeature(FeatureFile featureFile) {
+        return featureFileMapper.selectByNumberFeature(featureFile);
+    }
+
+    public static List<FeatureClass> selectFeatureClassByNumberFeature(FeatureClass featureClass) {
+        return featureClassMapper.selectByNumberFeature(featureClass);
+    }
+
+    public static List<String> selectClassMd5ByMethodMd5(String md5) {
+        return relationClassMethodMapper.selectClassMd5ByMethodMd5(md5);
     }
 
 }

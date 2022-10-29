@@ -17,6 +17,8 @@ public interface FeatureMethodMapper {
 
     FeatureMethod selectByPrimaryKey(String md5);
 
+    List<FeatureMethod> selectByFeature(FeatureMethod record);
+
     int updateByPrimaryKeySelective(FeatureMethod record);
 
     int updateByPrimaryKey(FeatureMethod record);
