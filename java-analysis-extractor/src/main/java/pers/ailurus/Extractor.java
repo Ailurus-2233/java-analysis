@@ -191,6 +191,9 @@ public class Extractor {
             ac.setMethods(amList);
             ac.setNumOfDep(dep.get(ac.getClassType()));
             ac.setNumOfBeDep(beDep.get(ac.getClassType()));
+
+            // 修改class的MD5 改为 classType + cdg的依赖关系
+            ac.setMd5(DigestUtils.md5Hex(ac.getMd5() + ac.getNumOfDep() + ac.getNumOfBeDep()));
             acList.add(ac);
         }
         ap.setPackageNum(packageSet.size());

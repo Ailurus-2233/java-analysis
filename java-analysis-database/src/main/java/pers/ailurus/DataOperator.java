@@ -164,4 +164,11 @@ public class DataOperator {
         return relationClassMethodMapper.selectClassMd5ByMethodMd5(md5);
     }
 
+    public static List<String> selectFileMd5ByClassMd5(String key) {
+        return relationFileClassMapper.selectFileMd5ByClassMd5(key);
+    }
+
+    public static List<MavenRepository> selectMavenDownloadList(int count) {
+        return mavenRepositoryMapper.selectMavenDownloadList(count);
+    }
 }

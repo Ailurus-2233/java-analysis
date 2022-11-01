@@ -109,4 +109,9 @@
       </if>
     </trim>
   </insert>
+  <select id="selectFileMd5ByClassMd5" parameterType="String" resultType="String">
+    select file_md5
+    from relation_file_class
+    where class_md5 = #{classMd5,jdbcType=VARCHAR}
+  </select>
 </mapper>

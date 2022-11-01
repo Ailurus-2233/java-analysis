@@ -26,4 +26,6 @@ public interface MavenRepositoryMapper {
     int batchInsert(@Param("list") List<MavenRepository> list);
 
     int updateBatchSelective(List<MavenRepository> list);
+
+    List<MavenRepository> selectMavenDownloadList(@Param("count") int count);
 }

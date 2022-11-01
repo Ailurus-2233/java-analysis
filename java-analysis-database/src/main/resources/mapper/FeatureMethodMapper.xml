@@ -26,7 +26,7 @@
     and return_type = #{returnType,jdbcType=INTEGER}
     and cfg_finger = #{cfgFinger,jdbcType=VARCHAR}
   </select>
-  <select id="selectClassMd5ByFeature" parameterType="pers.ailurus.model.FeatureMethod" resultMap="String">
+  <select id="selectClassMd5ByFeature" parameterType="pers.ailurus.model.FeatureMethod" resultType="java.lang.String">
     select class_md5 from relation_class_method
     where method_md5 in (
       select md5

@@ -20,4 +20,6 @@ public interface RelationFileClassMapper {
     int updateBatchSelective(List<RelationFileClass> list);
 
     int batchInsert(@Param("list") List<RelationFileClass> list);
+
+    List<String> selectFileMd5ByClassMd5(@Param("classMd5") String classMd5);
 }
