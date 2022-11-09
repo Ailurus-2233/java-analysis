@@ -20,7 +20,7 @@ import static pers.ailurus.FileUtil.getFileMd5;
 
 public class Extractor {
 
-    private static Logger logger = LoggerFactory.getLogger(Extractor.class);
+    private static final Logger logger = LoggerFactory.getLogger(Extractor.class);
 
     public static AnalysisPackage extract(String filePath, int limitSecond) throws TimeoutException {
         Callable<AnalysisPackage> task = () -> extract(filePath);

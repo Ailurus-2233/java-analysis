@@ -15,7 +15,7 @@ public class DownloadTestSet {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        List<MavenRepository> mavenList = DataOperator.selectMavenDownloadList(500);
+        List<MavenRepository> mavenList = DataOperator.selectMavenDownloadList(100);
         List<String[]> csv = new ArrayList<>();
         String folderPath = "C:\\Users\\wzy\\Desktop\\test";
         csv.add(new String[]{"md5", "url", "file_name", "name", "version", "predicted_name", "predicted_version"});

@@ -212,12 +212,35 @@
     </insert>
     <select id="selectMavenDownloadList" parameterType="Integer" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
+            <include refid="Base_Column_List"/>
         from
             maven_repository
         order by
             RAND()
         limit
             #{count,jdbcType=INTEGER}
+    </select>
+    <select id="selectMavenListWithZeroClass" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM
+            maven_repository
+        WHERE
+            md5 in (
+                SELECT
+                    MAX(mr.md5)
+                FROM
+                    feature_file ff
+                        LEFT JOIN
+                    maven_repository mr
+                    ON
+                        ff.md5 = mr.md5
+                WHERE
+                    ff.package_deep = 0 and ff.package_num = 0 and ff.class_num = 0
+                GROUP BY
+                    ff.`name`
+                ORDER BY
+                    AVG(mr.size)
+            )
     </select>
 </mapper>

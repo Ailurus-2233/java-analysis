@@ -11,6 +11,7 @@ import pers.ailurus.model.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -170,5 +171,26 @@ public class DataOperator {
 
     public static List<MavenRepository> selectMavenDownloadList(int count) {
         return mavenRepositoryMapper.selectMavenDownloadList(count);
+    }
+
+    public static FeatureFile selectFeatureFileByMd5(String md5) {
+        return featureFileMapper.selectByPrimaryKey(md5);
+    }
+
+    public static List<FeatureClass> selectFeatureClassByFileMd5(String md5) {
+        List<String> classMd5List = relationFileClassMapper.selectClassMd5ByFileMd5(md5);
+        List<FeatureClass> featureClassList = new ArrayList<>();
+        for (String classMd5 : classMd5List) {
+            featureClassList.add(featureClassMapper.selectByPrimaryKey(classMd5));
+        }
+        return featureClassList;
+    }
+
+    public static List<String> selectMethodMd5ByClassMd5(String md5) {
+        return relationClassMethodMapper.selectMethodMd5ByClassMd5(md5);
+    }
+
+    public static List<MavenRepository> selectMavenListWithZeroClass() {
+        return mavenRepositoryMapper.selectMavenListWithZeroClass();
     }
 }

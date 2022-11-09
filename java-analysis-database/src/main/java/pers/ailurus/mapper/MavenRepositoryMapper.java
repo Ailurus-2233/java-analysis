@@ -28,4 +28,6 @@ public interface MavenRepositoryMapper {
     int updateBatchSelective(List<MavenRepository> list);
 
     List<MavenRepository> selectMavenDownloadList(@Param("count") int count);
+
+    List<MavenRepository> selectMavenListWithZeroClass();
 }

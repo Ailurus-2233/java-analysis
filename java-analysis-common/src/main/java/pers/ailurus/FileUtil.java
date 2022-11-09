@@ -39,10 +39,7 @@ public class FileUtil {
      * @throws RuntimeException 运行时异常
      */
     public static boolean extractJarFile(String filePath, String target) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("7z x -y \"").append(filePath).append("\" -o\"").append(target).append("\"");
-        return CommonUtil.runCmd(sb.toString());
+        return CommonUtil.runCmd("7z x -y \"" + filePath + "\" -o\"" + target + "\"");
     }
 
     /**
@@ -80,7 +77,10 @@ public class FileUtil {
         File file = new File(filePath);
         if (!file.exists()) {
             try {
-                file.createNewFile();
+                boolean flag = file.createNewFile();
+                if (!flag) {
+                    return false;
+                }
             } catch (IOException e) {
                 e.printStackTrace();
                 return false;
@@ -88,7 +88,10 @@ public class FileUtil {
         } else {
             deleteFile(filePath);
             try {
-                file.createNewFile();
+                boolean flag = file.createNewFile();
+                if (!flag) {
+                    return false;
+                }
             } catch (IOException e) {
                 e.printStackTrace();
                 return false;
@@ -182,9 +185,8 @@ public class FileUtil {
 
     /**
      * 写入新的csv文件
-     * @param info
-     * @param path
-     * @return
+     * @param info 信息
+     * @param path 路径
      */
     public static void writeCSV(List<String[]> info, String path) {
         deleteAndCreateFile(path);
@@ -201,8 +203,8 @@ public class FileUtil {
     /**
      * 追加写入csv文件
      *
-     * @param info
-     * @param path
+     * @param info 信息
+     * @param path 路径
      */
     public static void writeCSVAppend(List<String[]> info, String path) {
         try (FileOutputStream fos = new FileOutputStream(path);

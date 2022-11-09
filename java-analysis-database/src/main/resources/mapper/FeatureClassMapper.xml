@@ -2,8 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pers.ailurus.mapper.FeatureClassMapper">
   <resultMap id="BaseResultMap" type="pers.ailurus.model.FeatureClass">
-    <!--@mbg.generated-->
-    <!--@Table feature_class-->
     <id column="md5" jdbcType="VARCHAR" property="md5" />
     <result column="modifier" jdbcType="INTEGER" property="modifier" />
     <result column="interface_num" jdbcType="INTEGER" property="interfaceNum" />
@@ -14,19 +12,16 @@
     <result column="be_dep_num" jdbcType="INTEGER" property="beDepNum" />
   </resultMap>
   <sql id="Base_Column_List">
-    <!--@mbg.generated-->
     md5, modifier, interface_num, has_super_class, field_num, method_num, dep_class_num, 
     be_dep_num
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    <!--@mbg.generated-->
     select 
     <include refid="Base_Column_List" />
     from feature_class
     where md5 = #{md5,jdbcType=VARCHAR}
   </select>
   <select id="selectByNumberFeature" parameterType="pers.ailurus.model.FeatureClass" resultMap="BaseResultMap">
-    <!--@mbg.generated-->
     select 
     <include refid="Base_Column_List" />
     from feature_class
@@ -36,9 +31,9 @@
     and field_num = #{fieldNum,jdbcType=INTEGER}
     and method_num = #{methodNum,jdbcType=INTEGER}
     and dep_class_num = #{depClassNum,jdbcType=INTEGER}
+    and be_dep_num = #{beDepNum,jdbcType=INTEGER}
   </select>
   <select id="selectByNumberFeatureFuzzy" parameterType="pers.ailurus.model.FeatureClass" resultMap="BaseResultMap">
-    <!--@mbg.generated-->
     select 
     <include refid="Base_Column_List" />
     from feature_class
@@ -48,14 +43,13 @@
     and field_num between #{fieldNum - 2,jdbcType=INTEGER} and #{fieldNum + 2,jdbcType=INTEGER}
     and method_num between #{methodNum - 2,jdbcType=INTEGER} and #{methodNum + 2,jdbcType=INTEGER}
     and dep_class_num between #{depClassNum - 5,jdbcType=INTEGER} and #{depClassNum + 5,jdbcType=INTEGER}
+    and be_dep_num between #{beDepNum - 5,jdbcType=INTEGER} and #{beDepNum + 5,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    <!--@mbg.generated-->
     delete from feature_class
     where md5 = #{md5,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="pers.ailurus.model.FeatureClass">
-    <!--@mbg.generated-->
     insert into feature_class (md5, modifier, interface_num, 
       has_super_class, field_num, method_num, 
       dep_class_num, be_dep_num)
@@ -64,7 +58,6 @@
       #{depClassNum,jdbcType=INTEGER}, #{beDepNum,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="pers.ailurus.model.FeatureClass">
-    <!--@mbg.generated-->
     insert into feature_class
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="md5 != null">
@@ -120,7 +113,6 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="pers.ailurus.model.FeatureClass">
-    <!--@mbg.generated-->
     update feature_class
     <set>
       <if test="modifier != null">
@@ -148,7 +140,6 @@
     where md5 = #{md5,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="pers.ailurus.model.FeatureClass">
-    <!--@mbg.generated-->
     update feature_class
     set modifier = #{modifier,jdbcType=INTEGER},
       interface_num = #{interfaceNum,jdbcType=INTEGER},
@@ -160,7 +151,6 @@
     where md5 = #{md5,jdbcType=VARCHAR}
   </update>
   <update id="updateBatch" parameterType="java.util.List">
-    <!--@mbg.generated-->
     update feature_class
     <trim prefix="set" suffixOverrides=",">
       <trim prefix="modifier = case" suffix="end,">
@@ -205,7 +195,6 @@
     </foreach>
   </update>
   <update id="updateBatchSelective" parameterType="java.util.List">
-    <!--@mbg.generated-->
     update feature_class
     <trim prefix="set" suffixOverrides=",">
       <trim prefix="modifier = case" suffix="end,">
@@ -264,7 +253,6 @@
     </foreach>
   </update>
   <insert id="batchInsert" parameterType="map">
-    <!--@mbg.generated-->
     insert into feature_class
     (md5, modifier, interface_num, has_super_class, field_num, method_num, dep_class_num, 
       be_dep_num)
@@ -276,7 +264,6 @@
     </foreach>
   </insert>
   <insert id="insertOrUpdate" parameterType="pers.ailurus.model.FeatureClass">
-    <!--@mbg.generated-->
     insert into feature_class
     (md5, modifier, interface_num, has_super_class, field_num, method_num, dep_class_num, 
       be_dep_num)
@@ -295,7 +282,6 @@
     be_dep_num = #{beDepNum,jdbcType=INTEGER}
   </insert>
   <insert id="insertOrUpdateSelective" parameterType="pers.ailurus.model.FeatureClass">
-    <!--@mbg.generated-->
     insert into feature_class
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="md5 != null">

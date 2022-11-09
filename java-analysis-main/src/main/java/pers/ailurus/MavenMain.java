@@ -53,9 +53,9 @@ public class MavenMain {
                 logger.info(String.format("[%s] Start analysis.", downloadName));
                 // 使用国内源
                 String urlCN = url.replace("https://repo1.maven.org/maven2/", "https://maven.aliyun.com/repository/public/");
-                boolean downloadResult = downloadWithCheckSize(urlCN, downloadName, "jar", 1024 * 1024 * 20);
+                boolean downloadResult = downloadWithCheckSize(urlCN, downloadName, "jar", 1024 * 1024 * 5);
                 if (!downloadResult) {
-                    downloadResult = downloadWithCheckSize(url, downloadName, "jar", 1024 * 1024 * 20);
+                    downloadResult = downloadWithCheckSize(url, downloadName, "jar", 1024 * 1024 * 5);
                 }
                 if (!downloadResult) {
                     stopAnalysis(path, "-3", i);
@@ -104,6 +104,7 @@ public class MavenMain {
         } finally {
             assert info != null;
             FileUtil.writeCSV(info, mavenPath);
+            System.exit(0);
         }
     }
 

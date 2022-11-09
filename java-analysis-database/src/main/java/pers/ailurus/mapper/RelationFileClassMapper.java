@@ -22,4 +22,6 @@ public interface RelationFileClassMapper {
     int batchInsert(@Param("list") List<RelationFileClass> list);
 
     List<String> selectFileMd5ByClassMd5(@Param("classMd5") String classMd5);
+
+    List<String> selectClassMd5ByFileMd5(@Param("fileMd5") String md5);
 }

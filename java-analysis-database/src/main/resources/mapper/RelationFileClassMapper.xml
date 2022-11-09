@@ -114,4 +114,9 @@
     from relation_file_class
     where class_md5 = #{classMd5,jdbcType=VARCHAR}
   </select>
+  <select id="selectMavenZeroList" parameterType="String" resultType="String">
+    select class_md5
+    from relation_file_class
+    where file_md5 = #{fileMd5,jdbcType=VARCHAR}
+  </select>
 </mapper>
