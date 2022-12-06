@@ -1,8 +1,6 @@
 package pers.ailurus;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pers.ailurus.model.*;
 import soot.*;
 import soot.jimple.DefinitionStmt;
@@ -16,11 +14,9 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
 
-import static pers.ailurus.FileUtil.getFileMd5;
+import static pers.ailurus.MyFileUtil.getFileMd5;
 
 public class Extractor {
-
-    private static final Logger logger = LoggerFactory.getLogger(Extractor.class);
 
     public static AnalysisPackage extract(String filePath, int limitSecond) throws TimeoutException {
         Callable<AnalysisPackage> task = () -> extract(filePath);
@@ -37,16 +33,16 @@ public class Extractor {
     }
 
     public static AnalysisPackage extract(String filePath) {
-        if (!FileUtil.isJarFile(filePath)) {
+        if (!MyFileUtil.isJarFile(filePath)) {
             throw new RuntimeException("Not jar file");
         }
         AnalysisPackage ap = new AnalysisPackage();
-        String target = FileUtil.getTargetPath(filePath);
-        if (FileUtil.extractJarFile(filePath, target)) {
+        String target = MyFileUtil.getExtractTargetPath(filePath);
+        if (MyFileUtil.extractJarFile(filePath, target)) {
             // 解析解压结果
             ap = analysisPackage(target);
             try {
-                ap.setMd5(FileUtil.getFileMd5(filePath));
+                ap.setMd5(MyFileUtil.getFileMd5(filePath));
             } catch (IOException e) {
                 throw new RuntimeException("Get md5 error, check your file path");
             }

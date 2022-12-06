@@ -1,5 +1,7 @@
 package pers.ailurus.model;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MavenRepository {
+public class MavenRepository implements Serializable {
     private String md5;
 
     private String name;

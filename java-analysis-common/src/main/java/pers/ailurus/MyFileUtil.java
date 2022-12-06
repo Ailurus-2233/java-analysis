@@ -1,8 +1,17 @@
 package pers.ailurus;
 
-import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
-import com.opencsv.exceptions.CsvException;
+
+import cn.hutool.core.io.FileTypeUtil;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.text.csv.CsvData;
+import cn.hutool.core.text.csv.CsvReader;
+import cn.hutool.core.text.csv.CsvRow;
+import cn.hutool.core.text.csv.CsvUtil;
+import cn.hutool.core.text.csv.CsvWriter;
+import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.core.util.StrUtil;
+
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.*;
@@ -15,7 +24,7 @@ import java.util.List;
  * @author wzy
  * @date 2022/09/17
  */
-public class FileUtil {
+public class MyFileUtil {
 
     /**
      * 得到文件md5
@@ -53,7 +62,7 @@ public class FileUtil {
         if (!file.exists()) {
             return false;
         } else {
-            return ".jar".equals(filePath.substring(filePath.length() - 4));
+            return FileTypeUtil.getType(file).equals("jar");
         }
     }
 
@@ -63,8 +72,8 @@ public class FileUtil {
      * @param filePath 文件路径
      * @return {@code String}
      */
-    public static String getTargetPath(String filePath) {
-        return filePath.substring(0, filePath.length() - 4);
+    public static String getExtractTargetPath(String filePath) {
+        return StrUtil.sub(filePath, 0, filePath.lastIndexOf(".")) + "_extract";
     }
 
 
@@ -73,70 +82,22 @@ public class FileUtil {
      *
      * @param filePath 文件路径
      */
-    public static boolean deleteAndCreateFile(String filePath) {
+    public static boolean dacFile(String filePath) {
         File file = new File(filePath);
         if (!file.exists()) {
-            try {
-                boolean flag = file.createNewFile();
-                if (!flag) {
-                    return false;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            }
+            FileUtil.touch(file);
         } else {
-            deleteFile(filePath);
-            try {
-                boolean flag = file.createNewFile();
-                if (!flag) {
-                    return false;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            }
+            FileUtil.del(filePath);
+            FileUtil.touch(file);
         }
         return true;
     }
 
-    public static List<String[]> readCSVFile(String filePath) throws IOException {
-        // 创建 reader
-        try (FileInputStream fis = new FileInputStream(filePath);
-             InputStreamReader isr = new InputStreamReader(fis,
-                     StandardCharsets.UTF_8);
-             CSVReader reader = new CSVReader(isr)) {
-            return reader.readAll();
-        } catch (CsvException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static void deleteFile(String filePath) {
-        File file = new File(filePath);
-        if (file.exists()) {
-            String cmd;
-            if (CommonUtil.isLinux()) {
-                cmd = String.format("rm -rf %s", filePath);
-
-            } else {
-                cmd = String.format("del /f /s /q %s", filePath);
-            }
-            CommonUtil.runCmd(cmd);
-        }
-    }
-
-    public static void deleteFolder(String filePath) {
-        File file = new File(filePath);
-        if (file.exists()) {
-            String cmd;
-            if (CommonUtil.isLinux()) {
-                cmd = String.format("rm -rf %s", filePath);
-            } else {
-                cmd = String.format("rd /s /q %s", filePath);
-            }
-            CommonUtil.runCmd(cmd);
-        }
+    public static List<CsvRow> readCSVFile(String filePath) throws IOException {
+        CsvReader reader = CsvUtil.getReader();
+        //从文件中读取CSV数据
+        CsvData data = reader.read(FileUtil.file(filePath));
+        return data.getRows();
     }
 
     /**
@@ -189,15 +150,9 @@ public class FileUtil {
      * @param path 路径
      */
     public static void writeCSV(List<String[]> info, String path) {
-        deleteAndCreateFile(path);
-        try (FileOutputStream fos = new FileOutputStream(path);
-             OutputStreamWriter osw = new OutputStreamWriter(fos,
-                     StandardCharsets.UTF_8);
-             CSVWriter writer = new CSVWriter(osw)) {
-            writer.writeAll(info);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        dacFile(path);
+        CsvWriter writer = CsvUtil.getWriter(path, CharsetUtil.CHARSET_UTF_8);
+        writer.write(info);
     }
 
     /**
@@ -207,16 +162,15 @@ public class FileUtil {
      * @param path 路径
      */
     public static void writeCSVAppend(List<String[]> info, String path) {
-        try (FileOutputStream fos = new FileOutputStream(path);
-             OutputStreamWriter osw = new OutputStreamWriter(fos,
-                     StandardCharsets.UTF_8);
-             CSVWriter writer = new CSVWriter(osw)) {
-            writer.writeAll(info);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        CsvWriter writer = CsvUtil.getWriter(path, CharsetUtil.CHARSET_UTF_8);
+        writer.write(info);
     }
 
+
+    /**
+     * 获取文件名称
+     * @param path 文件路径
+     */
     public static String getFileNameWithOutSuffix(String path) {
         File file = new File(path);
         return file.getName().substring(0, file.getName().lastIndexOf("."));

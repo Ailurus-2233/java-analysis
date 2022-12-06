@@ -1,6 +1,5 @@
 package pers.ailurus.model;
 
-import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
 import soot.Unit;
 
@@ -15,8 +14,7 @@ import java.util.List;
  * @date 2022/09/14
  */
 @Data
-public class CfgUnit {
-    @JSONField(serialize = false)
+public class CfgUnit implements Serializable {
     private transient Unit unit;
     private int id;
     private int[] child;

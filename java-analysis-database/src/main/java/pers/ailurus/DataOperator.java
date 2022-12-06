@@ -4,8 +4,6 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pers.ailurus.mapper.*;
 import pers.ailurus.model.*;
 
@@ -21,7 +19,6 @@ import static pers.ailurus.ObjectGenerator.*;
 
 public class DataOperator {
 
-    private static Logger logger = LoggerFactory.getLogger(DataOperator.class);
     private static SqlSessionFactory sqlSessionFactory;
     private static SqlSession session;
     private static int execCount = 0;

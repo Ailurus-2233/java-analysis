@@ -12,7 +12,7 @@ import java.util.List;
  * @date 2022/09/14
  */
 @Data
-public class AnalysisPackage {
+public class AnalysisPackage implements Serializable {
     private String md5;
     private int classNum;
     private int packageDeep;

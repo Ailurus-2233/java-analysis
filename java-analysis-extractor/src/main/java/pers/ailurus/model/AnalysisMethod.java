@@ -15,7 +15,7 @@ import java.util.Map;
  * @date 2022/09/14
  */
 @Data
-public class AnalysisMethod {
+public class AnalysisMethod implements Serializable{
 
     private String md5;
     private int modifier;

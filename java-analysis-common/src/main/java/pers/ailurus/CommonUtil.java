@@ -1,15 +1,23 @@
 package pers.ailurus;
 
-import com.alibaba.fastjson2.JSON;
 
 import java.io.*;
 
-import static pers.ailurus.FileUtil.deleteAndCreateFile;
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.io.file.FileWriter;
+import cn.hutool.core.util.RuntimeUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
+import cn.hutool.system.OsInfo;
+import cn.hutool.system.SystemUtil;
+
+import static pers.ailurus.MyFileUtil.dacFile;
 
 public class CommonUtil {
 
-    public static  <T> String object2json(T obj) {
-        return JSON.toJSONString(obj);
+    public static <T> String object2json(T obj) {
+        JSONObject json = JSONUtil.parseObj(obj, false);
+        return json.toStringPretty();
     }
 
     /**
@@ -19,19 +27,16 @@ public class CommonUtil {
      * @param object      对象
      * @return boolean
      */
-    public static boolean saveObject2File(Object object, String filePath) {
+    public static boolean saveObject2File(Serializable object, String filePath) {
         if (object == null) {
             return false;
         }
-        if (!deleteAndCreateFile(filePath)) {
+        if (!dacFile(filePath)) {
             return false;
         }
         try {
             FileOutputStream fos = new FileOutputStream(filePath);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(object);
-            oos.close();
-            fos.close();
+            IoUtil.writeObj(fos, true, object);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -49,39 +54,29 @@ public class CommonUtil {
         if (content == null) {
             return false;
         }
-        if (!deleteAndCreateFile(filePath)) {
+        if (!dacFile(filePath)) {
             return false;
         }
-        try (PrintWriter out = new PrintWriter(filePath)) {
-            out.println(content);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return false;
-        }
+        File file = new File(filePath);
+        FileWriter fw = new FileWriter(file);
+        fw.write(content);
         return true;
     }
 
 
     public static boolean isLinux() {
-        String os = System.getProperty("os.name");
-        return !os.toLowerCase().startsWith("win");
+        OsInfo os = SystemUtil.getOsInfo();
+        return os.isLinux();
     }
 
 
-    public static boolean runCmd(String inputCmd) {
-        String[] cmd;
-        if (isLinux()) {
-            cmd = new String[]{"/bin/sh", "-c", inputCmd};
-        } else {
-            cmd = new String[]{"cmd", "/c", inputCmd};
-        }
+    public static boolean runCmd(String cmd) {
         try {
-            Process process = Runtime.getRuntime().exec(cmd);
-            process.waitFor();
-            return true;
-        } catch (IOException | InterruptedException e) {
+            RuntimeUtil.execForStr(cmd);
+        } catch(Exception e) {
             e.printStackTrace();
             return false;
         }
+        return true;
     }
 }

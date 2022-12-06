@@ -1,6 +1,5 @@
 package pers.ailurus.model;
 
-import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -8,10 +7,9 @@ import java.util.Arrays;
 import java.util.List;
 
 @Data
-public class CdgUnit {
+public class CdgUnit implements Serializable {
     private int id;
     private int[] dependencies;
-    @JSONField(serialize = false)
     private String className;
 
     public CdgUnit(String className, int i) {

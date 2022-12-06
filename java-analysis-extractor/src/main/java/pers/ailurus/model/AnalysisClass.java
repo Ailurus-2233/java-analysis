@@ -1,6 +1,5 @@
 package pers.ailurus.model;
 
-import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -13,7 +12,7 @@ import java.util.List;
  * @date 2022/09/14
  */
 @Data
-public class AnalysisClass {
+public class AnalysisClass implements Serializable{
 
     private String md5;
     private int modifier;
@@ -25,7 +24,6 @@ public class AnalysisClass {
     private int numOfBeDep;
     private double importance;
     private List<AnalysisMethod> methods;
-
-    @JSONField(serialize = false)
+    
     private String classType;
 }

@@ -48,7 +48,7 @@ public class ObjectGenerator {
         mr.setUrl(url);
         mr.setSize(new File(filePath).length());
         try {
-            mr.setMd5(FileUtil.getFileMd5(filePath));
+            mr.setMd5(MyFileUtil.getFileMd5(filePath));
         } catch (IOException ignored) {
 
         }
