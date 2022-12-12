@@ -1,7 +1,5 @@
 package pers.ailurus;
 
-import com.opencsv.CSVWriter;
-
 import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.text.csv.CsvData;
@@ -15,7 +13,6 @@ import cn.hutool.core.util.StrUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**

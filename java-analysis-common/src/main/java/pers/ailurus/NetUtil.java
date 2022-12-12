@@ -12,6 +12,13 @@ import java.net.URL;
 public class NetUtil {
     private static final Logger logger = LoggerFactory.getLogger(NetUtil.class);
 
+    public static boolean download(String url, String path) {
+        File file = new File(path);
+        String fileName = file.getName();
+        String dir = file.getParent();
+        return download(url, fileName, dir, 0);
+    }
+
     public static boolean download(String url, String fileName, String dir, int count) {
         if (count == 3) {
             logger.error(String.format("[%s] Unable to download.", fileName));
