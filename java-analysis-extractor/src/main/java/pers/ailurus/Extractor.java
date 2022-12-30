@@ -1,5 +1,6 @@
 package pers.ailurus;
 
+import cn.hutool.core.lang.Console;
 import org.apache.commons.codec.digest.DigestUtils;
 import pers.ailurus.model.*;
 import soot.*;
@@ -41,11 +42,7 @@ public class Extractor {
         if (MyFileUtil.extractJarFile(filePath, target)) {
             // 解析解压结果
             ap = analysisPackage(target);
-            try {
-                ap.setMd5(MyFileUtil.getFileMd5(filePath));
-            } catch (IOException e) {
-                throw new RuntimeException("Get md5 error, check your file path");
-            }
+            ap.setMd5(execUniMd5(ap));
         }
         return ap;
     }
@@ -170,8 +167,8 @@ public class Extractor {
         ap.setCdg(cdg);
         Map<String, Integer> dep = getDepMap(cdg);
         Map<String, Integer> beDep = getBeDepMap(cdg);
-
         for (SootClass sc : classChain) {
+            if ("module-info".equals(sc.getName()))continue;
             // 设置包深度
             int packageDeep = sc.getJavaPackageName().split("\\.").length;
             if (packageDeep > ap.getPackageDeep()) {
@@ -194,6 +191,7 @@ public class Extractor {
         }
         ap.setPackageNum(packageSet.size());
         ap.setClasses(acList);
+
         return ap;
     }
 
@@ -209,6 +207,9 @@ public class Extractor {
         Map<String, Integer> classMap = new HashMap<>(classes.size());
         int i = 0;
         for (SootClass sc : classes) {
+            if ("module-info".equals(sc.getName())) {
+                continue;
+            }
             classMap.put(sc.getName(), i);
             cdg.add(new CdgUnit(sc.getName(), i++));
         }
@@ -220,7 +221,7 @@ public class Extractor {
             Set<String> temp = new HashSet<>();
             temp.add(sc.getSuperclass().getName());
             Chain<SootField> fields = sc.getFields();
-            for (SootField sf: fields) {
+            for (SootField sf : fields) {
                 temp.add(sf.getType().toString());
             }
             for (SootMethod sm : sc.getMethods()) {
@@ -251,18 +252,18 @@ public class Extractor {
 
     public static Map<String, Integer> getDepMap(List<CdgUnit> cdg) {
         Map<String, Integer> dep = new HashMap<>(cdg.size());
-        for (CdgUnit c: cdg) {
-            dep.put(c.getClassName(), c.getDependencies().length);
+        for (CdgUnit c : cdg) {
+            dep.put(c.getClassName(), c.getDependencies() == null ? 0 : c.getDependencies().length);
         }
         return dep;
     }
 
     public static Map<String, Integer> getBeDepMap(List<CdgUnit> cdg) {
         Map<String, Integer> beDep = new HashMap<>(cdg.size());
-        for (CdgUnit c: cdg) {
+        for (CdgUnit c : cdg) {
             beDep.put(c.getClassName(), 0);
         }
-        for (CdgUnit c: cdg) {
+        for (CdgUnit c : cdg) {
             for (Integer i : c.getDependencies()) {
                 String name = cdg.get(i).getClassName();
                 beDep.put(name, beDep.get(name) + 1);
@@ -279,5 +280,14 @@ public class Extractor {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    public static String execUniMd5(AnalysisPackage ap) {
+        StringBuilder sb = new StringBuilder();
+        for (AnalysisClass ac : ap.getClasses()) {
+            sb.append(ac.getMd5());
+        }
+        return CommonUtil.getStrMd5(sb.toString());
     }
 }

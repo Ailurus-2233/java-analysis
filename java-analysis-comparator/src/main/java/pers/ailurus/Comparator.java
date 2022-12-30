@@ -19,7 +19,7 @@ public class Comparator {
 
         // 查询类似的TPL
         List<FeatureFile> ffList = DataOperator.selectFeatureFileByNumberFeature(new FeatureFile(
-                null, null, null, ap.getClassNum(), ap.getPackageDeep(), ap.getPackageNum()));
+                null, null, null, null, ap.getClassNum(), ap.getPackageDeep(), ap.getPackageNum()));
 
         Map<String, Integer> ffMap = new HashMap<>();
 
@@ -80,7 +80,7 @@ public class Comparator {
         List<Result> ans = new ArrayList<>();
         for (FeatureFile ff : ffList) {
             if (ffMap.getOrDefault(ff.getMd5(), 0) == max) {
-                ans.add(new Result(ff.getName(), ff.getVersion()));
+                ans.add(new Result(ff.getGroupId(), ff.getArtifactId(), ff.getVersion()));
             }
         }
         return ans;
@@ -91,7 +91,7 @@ public class Comparator {
         List<FeatureClass> classList = DataOperator.selectFeatureClassByFileMd5(md5);
 
         List<FeatureFile> ffList = DataOperator.selectFeatureFileByNumberFeature(new FeatureFile(
-                null, null, null, ff.getClassNum(), ff.getPackageDeep(), ff.getPackageNum()));
+                null, null, null, null, ff.getClassNum(), ff.getPackageDeep(), ff.getPackageNum()));
         Map<String, Integer> ffMap = new HashMap<>();
 
         for (FeatureClass fc : classList) {
@@ -151,7 +151,7 @@ public class Comparator {
         List<Result> ans = new ArrayList<>();
         for (FeatureFile t : ffList) {
             if (ffMap.getOrDefault(t.getMd5(), 0) == max) {
-                ans.add(new Result(t.getName(), t.getVersion()));
+                ans.add(new Result(t.getGroupId(), t.getArtifactId(), t.getVersion()));
             }
         }
         return ans;

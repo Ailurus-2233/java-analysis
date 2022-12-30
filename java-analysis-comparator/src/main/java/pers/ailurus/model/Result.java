@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Result {
     
-    private String name;
+    private String groupId;
+    private String artifactId;
+
     private String version;
 
 }

@@ -11,18 +11,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FeatureFile implements Serializable {
     private String md5;
-
-    private String name;
-
+    private String groupId;
+    private String artifactId;
     private String version;
-
     private Integer classNum;
-
     private Integer packageDeep;
-
     private Integer packageNum;
-
     public String toCSVLine() {
-        return String.format("%s,%s,%s,%d,%d,%d", md5, name, version, classNum, packageDeep, packageNum);
+        return String.format("%s,%s,%s,%s,%d,%d,%d", md5, groupId, artifactId, version, classNum, packageDeep, packageNum);
     }
 }

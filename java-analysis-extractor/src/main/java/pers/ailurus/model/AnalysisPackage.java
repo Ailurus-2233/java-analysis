@@ -19,4 +19,5 @@ public class AnalysisPackage implements Serializable {
     private int packageNum;
     private List<AnalysisClass> classes;
     private List<CdgUnit> cdg;
+    private String uniMd5;
 }

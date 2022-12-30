@@ -10,7 +10,6 @@ import java.util.Set;
 import static pers.ailurus.ObjectGenerator.*;
 
 public class CSVOperator {
-    private static final String savePath = "csv";
 
     private static File ffCSV;
     private static File fcCSV;
@@ -20,9 +19,9 @@ public class CSVOperator {
     private static File mrCSV;
 
 
-    public static void initCSVFile(String fileName) throws IOException {
+    public static void initCSVFile(String savePath) throws IOException {
 
-        File path = new File(savePath + File.separator + fileName);
+        File path = new File(savePath);
         if (!path.exists()) {
             path.mkdirs();
         }
@@ -35,7 +34,7 @@ public class CSVOperator {
 
 
         if (!ffCSV.exists() && ffCSV.createNewFile()) {
-            MyFileUtil.writeLine("md5,name,version,class_num,package_deep,package_num", ffCSV.getAbsolutePath());
+            MyFileUtil.writeLine("md5,group_id,artifact_id,version,class_num,package_deep,package_num", ffCSV.getAbsolutePath());
         }
         if (!fcCSV.exists() && fcCSV.createNewFile()) {
             MyFileUtil.writeLine("md5,modifier,interface_num,has_super_class,field_num,method_num,dep_class_num,be_dep_num", fcCSV.getAbsolutePath());
@@ -50,7 +49,7 @@ public class CSVOperator {
             MyFileUtil.writeLine("class_md5,method_md5", rcmCSV.getAbsolutePath());
         }
         if (!mrCSV.exists() && mrCSV.createNewFile()) {
-            MyFileUtil.writeLine("md5,name,version,url,size", mrCSV.getAbsolutePath());
+            MyFileUtil.writeLine("group_id,artifact_id,version,url,size", mrCSV.getAbsolutePath());
         }
     }
 
@@ -78,8 +77,8 @@ public class CSVOperator {
         MyFileUtil.writeLine(mr.toCSVLine(), mrCSV.getAbsolutePath());
     }
 
-    public static void saveAnalysisPackage(String name, String version, AnalysisPackage ap) {
-        FeatureFile featureFile = getFileFeatureByAnalysisPackage(name, version, ap);
+    public static void saveAnalysisPackage(String groupId, String artifactId, String version, AnalysisPackage ap) {
+        FeatureFile featureFile = getFileFeatureByAnalysisPackage(groupId, artifactId, version, ap);
         Set<String> fcSet = new HashSet<>();
         Set<String> fmSet = new HashSet<>();
         Set<String> rcmSet = new HashSet<>();

@@ -117,8 +117,8 @@ public class DataOperator {
         }
     }
 
-    public static void insertAnalysisPackage(String name, String version, AnalysisPackage ap) throws IOException {
-        FeatureFile featureFile = getFileFeatureByAnalysisPackage(name, version, ap);
+    public static void insertAnalysisPackage(String groupId, String artifactId, String version, AnalysisPackage ap) throws IOException {
+        FeatureFile featureFile = getFileFeatureByAnalysisPackage(groupId, artifactId, version, ap);
         insert(featureFile);
         Set<FeatureClass> fcSet = new HashSet<>();
         Set<FeatureMethod> fmSet = new HashSet<>();

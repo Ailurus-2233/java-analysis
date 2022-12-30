@@ -6,6 +6,7 @@ import java.io.*;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.io.file.FileWriter;
 import cn.hutool.core.util.RuntimeUtil;
+import cn.hutool.crypto.SecureUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.system.OsInfo;
@@ -78,5 +79,9 @@ public class CommonUtil {
             return false;
         }
         return true;
+    }
+
+    public static String getStrMd5(String source) {
+        return SecureUtil.md5(source);
     }
 }

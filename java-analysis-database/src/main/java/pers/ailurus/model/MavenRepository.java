@@ -10,17 +10,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MavenRepository implements Serializable {
-    private String md5;
-
-    private String name;
-
+    private String groupId;
+    private String artifactId;
     private String version;
-
     private String url;
-
     private Long size;
 
     public String toCSVLine() {
-        return String.format("%s,%s,%s,%s,%d", md5, name, version, url, size);
+        return String.format("%s,%s,%s,%s,%d", groupId, artifactId, version, url, size);
     }
 }

@@ -7,9 +7,10 @@ import java.io.IOException;
 
 public class ObjectGenerator {
 
-    public static FeatureFile getFileFeatureByAnalysisPackage(String name, String version, AnalysisPackage ap) {
+    public static FeatureFile getFileFeatureByAnalysisPackage(String groupId, String artifactId, String version, AnalysisPackage ap) {
         FeatureFile featureFile = new FeatureFile();
-        featureFile.setName(name);
+        featureFile.setGroupId(groupId);
+        featureFile.setArtifactId(artifactId);
         featureFile.setVersion(version);
         featureFile.setPackageNum(ap.getPackageNum());
         featureFile.setClassNum(ap.getClassNum());
@@ -41,17 +42,13 @@ public class ObjectGenerator {
         return fm;
     }
 
-    public static MavenRepository getMavenRepository(String name, String version, String url, String filePath) {
+    public static MavenRepository getMavenRepository(String groupId, String artifactId, String version, String url, String filePath) {
         MavenRepository mr = new MavenRepository();
-        mr.setName(name);
+        mr.setGroupId(groupId);
+        mr.setArtifactId(artifactId);
         mr.setVersion(version);
         mr.setUrl(url);
         mr.setSize(new File(filePath).length());
-        try {
-            mr.setMd5(MyFileUtil.getFileMd5(filePath));
-        } catch (IOException ignored) {
-
-        }
         return mr;
     }
 
