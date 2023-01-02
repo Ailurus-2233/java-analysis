@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.hutool.core.lang.Console;
 import pers.ailurus.model.AnalysisClass;
 import pers.ailurus.model.AnalysisMethod;
 import pers.ailurus.model.AnalysisPackage;
@@ -18,22 +19,24 @@ public class Comparator {
         AnalysisPackage ap = Extractor.extract(jarFilePath);
 
         // 查询类似的TPL
-        List<FeatureFile> ffList = DataOperator.selectFeatureFileByNumberFeature(new FeatureFile(
+        List<String> ffList = DataOperator.selectFileMd5ByNumberFeature(new FeatureFile(
                 null, null, null, null, ap.getClassNum(), ap.getPackageDeep(), ap.getPackageNum()));
+        Console.print("查询到 {} 个类似的TPL", ffList.size());
 
         Map<String, Integer> ffMap = new HashMap<>();
 
         for (AnalysisClass ac : ap.getClasses()) {
-            List<FeatureClass> fcList = DataOperator.selectFeatureClassByNumberFeature(new FeatureClass(
+            List<String> fcList = DataOperator.selectFeatureClassByNumberFeature(new FeatureClass(
                     null, ac.getModifier(), ac.getInterfaceNum(), ac.getIsHasSuperClass(),
-                    ac.getFieldNum(), ac.getMethodNum(), ac.getNumOfDep(), ac.getNumOfBeDep()));
+                    ac.getFieldNum(), ac.getMethodNum(), ac.getNumOfDep(), ac.getNumOfBeDep()), ffList);
+            Console.print("查询到 {} 个类似的Class", fcList.size());
             Map<String, Integer> fcMap = new HashMap<>();
             for (AnalysisMethod am : ac.getMethods()) {
                 List<String> classMd5List = DataOperator.selectClassMd5ByMethodMd5(am.getMd5());
                 for (String classMd5 : classMd5List) {
                     boolean flag = false;
-                    for (FeatureClass fc : fcList) {
-                        if (fc.getMd5().equals(classMd5)) {
+                    for (String fc : fcList) {
+                        if (fc.equals(classMd5)) {
                             flag = true;
                             break;
                         }
@@ -55,8 +58,8 @@ public class Comparator {
                     boolean flag = false;
                     List<String> fileMd5List = DataOperator.selectFileMd5ByClassMd5(entry.getKey());
                     for (String fileMd5 : fileMd5List) {
-                        for (FeatureFile ff : ffList) {
-                            if (ff.getMd5().equals(fileMd5)) {
+                        for (String ff : ffList) {
+                            if (ff.equals(fileMd5)) {
                                 flag = true;
                                 break;
                             }
@@ -78,9 +81,10 @@ public class Comparator {
         }
 
         List<Result> ans = new ArrayList<>();
-        for (FeatureFile ff : ffList) {
-            if (ffMap.getOrDefault(ff.getMd5(), 0) == max) {
-                ans.add(new Result(ff.getGroupId(), ff.getArtifactId(), ff.getVersion()));
+        for (String ff : ffList) {
+            if (ffMap.getOrDefault(ff, 0) == max) {
+                FeatureFile temp = DataOperator.selectFeatureFileByMd5(ff);
+                ans.add(new Result(temp.getGroupId(), temp.getArtifactId(), temp.getVersion()));
             }
         }
         return ans;

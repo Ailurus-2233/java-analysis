@@ -11,7 +11,6 @@ public class Result {
     
     private String groupId;
     private String artifactId;
-
     private String version;
 
 }

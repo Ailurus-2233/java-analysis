@@ -18,11 +18,16 @@ import java.util.concurrent.TimeoutException;
 public class Main {
 
     public static void main(String[] args) {
-        args = new String[]{
-                "--analysis",
-                "--batch",
-                "--csv_file", "C:\\Users\\ailur\\Documents\\iie_work\\maven\\target\\maven_50k_dataset.csv",
-                "--output_path", "C:\\Users\\ailur\\Documents\\iie_work\\maven\\result"
+        // 批量分析参数
+//        args = new String[]{
+//                "--analysis",
+//                "--batch",
+//                "--csv_file", "C:\\Users\\ailur\\Documents\\iie_work\\maven\\target\\maven_50k_dataset.csv",
+//                "--output_path", "C:\\Users\\ailur\\Documents\\iie_work\\maven\\result"
+//        };
+        // 单个解析参数
+        args = new String[] {
+                "--jar_file", "C:\\Users\\ailur\\Documents\\iie_work\\maven\\TPL\\al.bluecryst\\bluecrystal.deps.domain\\bluecrystal.deps.domain-1.5.0.jar",
         };
         OptionsParser parser = OptionsParser.newOptionsParser(Options.class);
         parser.parseAndExitUponError(args);
@@ -43,8 +48,13 @@ public class Main {
             matchBatch(options.csvFile, options.outputPath);
         else if ("".equals(options.jarFile))
             matchSingleNet(options.netFile, options.outputPath);
-        else
-            matchSingle(options.jarFile, options.outputPath);
+        else {
+            try {
+                matchSingle(options.jarFile, options.outputPath);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         // 结束程序
         System.exit(0);
     }
@@ -96,8 +106,10 @@ public class Main {
 
     }
 
-    public static void matchSingle(String jarFile, String outputPath) {
-
+    public static void matchSingle(String jarFile, String outputPath) throws IOException {
+        DataOperator.initOperator();
+        List<Result> ans = Comparator.deduceTPL(jarFile);
+        Console.print(ans);
     }
 
     private static void matchSingleNet(String netFile, String outputPath) {

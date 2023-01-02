@@ -40,11 +40,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-            <version>5.8.10</version>
-        </dependency>
-        <dependency>
             <groupId>com.github.pcj</groupId>
             <artifactId>google-options</artifactId>
             <version>1.0.0</version>

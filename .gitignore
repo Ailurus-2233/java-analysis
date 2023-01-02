@@ -41,3 +41,5 @@ build/
 csv/
 jar/
 *.csv
+result/
+target/

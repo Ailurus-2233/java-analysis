@@ -1,33 +1,18 @@
 package pers.ailurus.mapper;
 
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 import pers.ailurus.model.MavenRepository;
 
+import java.util.List;
+
+@Mapper
 public interface MavenRepositoryMapper {
-    int deleteByPrimaryKey(String md5);
+    @Insert("insert into maven_repository (group_id, artifact_id, version, url, size) values (#{groupId}, #{artifactId}, #{version}, #{url}, #{size})")
+    void insert(MavenRepository mr);
 
-    int insert(MavenRepository record);
+    @Select("select * from maven_repository limit 0, #{count}")
+    List<MavenRepository> selectMavenDownloadList(int count);
 
-    int insertOrUpdate(MavenRepository record);
-
-    int insertOrUpdateSelective(MavenRepository record);
-
-    int insertSelective(MavenRepository record);
-
-    MavenRepository selectByPrimaryKey(String md5);
-
-    int updateByPrimaryKeySelective(MavenRepository record);
-
-    int updateByPrimaryKey(MavenRepository record);
-
-    int updateBatch(List<MavenRepository> list);
-
-    int batchInsert(@Param("list") List<MavenRepository> list);
-
-    int updateBatchSelective(List<MavenRepository> list);
-
-    List<MavenRepository> selectMavenDownloadList(@Param("count") int count);
-
-    List<MavenRepository> selectMavenListWithZeroClass();
 }

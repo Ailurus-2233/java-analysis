@@ -17,6 +17,6 @@ public class Options extends OptionsBase {
             "\n\t分析模式:group_id,artifact_id,version,file_name,url,flag,file_size,file_path" +
             "\n\t匹配模式:file_name,flag,file_path", defaultValue = "")
     public String csvFile;
-    @Option(name = "output_path", help = "结果输出路径", defaultValue = "")
+    @Option(name = "output_path", help = "结果输出路径", defaultValue = "./result")
     public String outputPath;
 }

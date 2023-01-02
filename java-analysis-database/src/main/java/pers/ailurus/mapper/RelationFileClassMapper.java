@@ -1,27 +1,20 @@
 package pers.ailurus.mapper;
 
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 import pers.ailurus.model.RelationFileClass;
 
+import java.util.List;
+
+@Mapper
 public interface RelationFileClassMapper {
-    int deleteByPrimaryKey(@Param("fileMd5") String fileMd5, @Param("classMd5") String classMd5);
+    @Insert("insert into relation_file_class (file_md5, class_md5) values (#{fileMd5}, #{classMd5})")
+    void insert(RelationFileClass rfc);
 
-    int insert(RelationFileClass record);
+    @Select("select file_md5 from relation_file_class where class_md5 = #{classMd5}")
+    List<String> selectFileMd5ByClassMd5(String key);
 
-    int insertOrUpdate(RelationFileClass record);
-
-    int insertOrUpdateSelective(RelationFileClass record);
-
-    int insertSelective(RelationFileClass record);
-
-    int updateBatch(List<RelationFileClass> list);
-
-    int updateBatchSelective(List<RelationFileClass> list);
-
-    int batchInsert(@Param("list") List<RelationFileClass> list);
-
-    List<String> selectFileMd5ByClassMd5(@Param("classMd5") String classMd5);
-
-    List<String> selectClassMd5ByFileMd5(@Param("fileMd5") String md5);
+    @Select("select class_md5 from relation_file_class where file_md5 = #{fileMd5}")
+    List<String> selectClassMd5ByFileMd5(String md5);
 }

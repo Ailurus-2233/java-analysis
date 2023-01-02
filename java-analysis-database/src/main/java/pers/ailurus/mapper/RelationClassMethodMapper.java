@@ -1,28 +1,20 @@
 package pers.ailurus.mapper;
 
-import java.util.List;
-import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 import pers.ailurus.model.RelationClassMethod;
 
+import java.util.List;
+
+@Mapper
 public interface RelationClassMethodMapper {
-    List<String> selectClassMd5ByMethodMd5(String methodMd5);
+    @Insert("insert into relation_class_method (class_md5, method_md5) values (#{classMd5}, #{methodMd5})")
+    void insert(RelationClassMethod rcm);
 
+    @Select("select class_md5 from relation_class_method where method_md5 = #{md5}")
+    List<String> selectClassMd5ByMethodMd5(String md5);
+
+    @Select("select method_md5 from relation_class_method where class_md5 = #{md5}")
     List<String> selectMethodMd5ByClassMd5(String md5);
-
-    int deleteByPrimaryKey(@Param("classMd5") String classMd5, @Param("methodMd5") String methodMd5);
-
-    int insert(RelationClassMethod record);
-
-    int insertOrUpdate(RelationClassMethod record);
-
-    int insertOrUpdateSelective(RelationClassMethod record);
-
-    int insertSelective(RelationClassMethod record);
-
-    int updateBatch(List<RelationClassMethod> list);
-
-    int updateBatchSelective(List<RelationClassMethod> list);
-
-    int batchInsert(@Param("list") List<RelationClassMethod> list);
-
 }

@@ -1,5 +1,6 @@
 package pers.ailurus;
 
+import cn.hutool.core.lang.Console;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -9,10 +10,7 @@ import pers.ailurus.model.*;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 import static pers.ailurus.ObjectGenerator.*;
@@ -154,8 +152,33 @@ public class DataOperator {
         return featureFileMapper.selectByNumberFeature(featureFile);
     }
 
+    public static List<String> selectFileMd5ByNumberFeature(FeatureFile featureFile) {
+        return featureFileMapper.selectMd5ByNumberFeature(featureFile);
+    }
+
     public static List<FeatureClass> selectFeatureClassByNumberFeature(FeatureClass featureClass) {
         return featureClassMapper.selectByNumberFeature(featureClass);
+    }
+
+    public static List<String> selectFeatureClassByNumberFeature(FeatureClass featureClass, List<String> ffMd5) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("(");
+        for (String s : ffMd5) {
+            sb.append("'").append(s).append("',");
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append(")");
+        Map param = new HashMap<>();
+        param.put("modifier", featureClass.getModifier());
+        param.put("interfaceNum", featureClass.getInterfaceNum());
+        param.put("hasSuperClass", featureClass.getHasSuperClass());
+        param.put("fieldNum", featureClass.getFieldNum());
+        param.put("methodNum", featureClass.getMethodNum());
+        param.put("ffMd5", sb.toString());
+        param.put("depClassNum", featureClass.getDepClassNum());
+        param.put("beDepNum", featureClass.getBeDepNum());
+
+        return featureClassMapper.selectByNumberFeatureWithFileMd5(param);
     }
 
     public static List<String> selectClassMd5ByMethodMd5(String md5) {
@@ -164,10 +187,6 @@ public class DataOperator {
 
     public static List<String> selectFileMd5ByClassMd5(String key) {
         return relationFileClassMapper.selectFileMd5ByClassMd5(key);
-    }
-
-    public static List<MavenRepository> selectMavenDownloadList(int count) {
-        return mavenRepositoryMapper.selectMavenDownloadList(count);
     }
 
     public static FeatureFile selectFeatureFileByMd5(String md5) {
@@ -185,9 +204,5 @@ public class DataOperator {
 
     public static List<String> selectMethodMd5ByClassMd5(String md5) {
         return relationClassMethodMapper.selectMethodMd5ByClassMd5(md5);
-    }
-
-    public static List<MavenRepository> selectMavenListWithZeroClass() {
-        return mavenRepositoryMapper.selectMavenListWithZeroClass();
     }
 }

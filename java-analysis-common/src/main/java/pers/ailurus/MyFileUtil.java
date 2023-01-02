@@ -45,6 +45,9 @@ public class MyFileUtil {
      * @throws RuntimeException 运行时异常
      */
     public static boolean extractJarFile(String filePath, String target) {
+        if (checkExtract(filePath)) {
+            return true;
+        }
         return CommonUtil.runCmd("7z x -y \"" + filePath + "\" -o\"" + target + "\"");
     }
 
@@ -71,6 +74,20 @@ public class MyFileUtil {
      */
     public static String getExtractTargetPath(String filePath) {
         return StrUtil.sub(filePath, 0, filePath.lastIndexOf(".")) + "_extract";
+    }
+
+    /**
+     * 检查是否解压过
+     * @param filePath
+     * @return
+     */
+    public static boolean checkExtract(String filePath) {
+        String target = getExtractTargetPath(filePath);
+        File file = new File(target);
+        if (!file.exists()) {
+            return false;
+        }
+        return true;
     }
 
 
