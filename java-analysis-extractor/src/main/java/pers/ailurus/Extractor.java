@@ -1,6 +1,11 @@
 package pers.ailurus;
 
 import cn.hutool.core.lang.Console;
+import cn.hutool.core.lang.Dict;
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONParser;
+import cn.hutool.json.JSONUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import pers.ailurus.model.*;
 import soot.*;
@@ -109,8 +114,10 @@ public class Extractor {
         if (cfg != null) {
             for (CfgUnit unit : cfg) {
                 sb.append(unit.toString());
+                unit.printUnit();
             }
         }
+        Console.print("\n");
         return DigestUtils.md5Hex(sb.toString());
     }
 
@@ -168,7 +175,7 @@ public class Extractor {
         Map<String, Integer> dep = getDepMap(cdg);
         Map<String, Integer> beDep = getBeDepMap(cdg);
         for (SootClass sc : classChain) {
-            if ("module-info".equals(sc.getName()))continue;
+            if ("module-info".equals(sc.getName())) continue;
             // 设置包深度
             int packageDeep = sc.getJavaPackageName().split("\\.").length;
             if (packageDeep > ap.getPackageDeep()) {
@@ -218,6 +225,7 @@ public class Extractor {
             if ("module-info".equals(sc.getName())) {
                 continue;
             }
+
             Set<String> temp = new HashSet<>();
             temp.add(sc.getSuperclass().getName());
             Chain<SootField> fields = sc.getFields();
@@ -289,5 +297,43 @@ public class Extractor {
             sb.append(ac.getMd5());
         }
         return CommonUtil.getStrMd5(sb.toString());
+    }
+
+    public static void getClassInfo(SootClass sc) {
+        JSONArray fields = JSONUtil.createArray();
+        for (SootField sf : sc.getFields()) {
+            JSONObject field = JSONUtil.createObj()
+                    .set("name", sf.getName())
+                    .set("type", sf.getType().toString())
+                    .set("modifier", sf.getModifiers())
+                    .set("signature", sf.getSignature())
+                    .set("declaration", sf.getDeclaration())
+                    .set("number", sf.getNumber());
+            fields.add(field);
+        }
+        JSONArray methods = JSONUtil.createArray();
+        for (SootMethod sm : sc.getMethods()) {
+            List<String> args = new ArrayList<>();
+            for (Type type:sm.getParameterTypes()) {
+                args.add(type.toString());
+            }
+            methods.add(
+                    JSONUtil.createObj()
+                            .set("signature", sm.getSignature())
+            );
+        }
+        JSONObject obj = JSONUtil.createObj()
+                .set("name", sc.getName())
+                .set("interface_count", sc.getInterfaceCount())
+                .set("package", sc.getJavaPackageName())
+                .set("type", sc.getType().toString())
+                .set("short_java_style_name", sc.getShortJavaStyleName())
+                .set("field_count", sc.getFieldCount())
+                .set("fields", fields)
+                .set("method_count", sc.getMethodCount())
+                .set("methods", methods)
+                .set("super_class", sc.getSuperclass().toString());
+
+        Console.print("{}\n", obj.toStringPretty());
     }
 }

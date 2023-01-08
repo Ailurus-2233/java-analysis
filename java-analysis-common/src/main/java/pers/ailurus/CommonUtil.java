@@ -5,6 +5,7 @@ import java.io.*;
 
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.io.file.FileWriter;
+import cn.hutool.core.lang.Console;
 import cn.hutool.core.util.RuntimeUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.json.JSONObject;
@@ -73,7 +74,8 @@ public class CommonUtil {
 
     public static boolean runCmd(String cmd) {
         try {
-            RuntimeUtil.execForStr(cmd);
+            String str = RuntimeUtil.execForStr(cmd);
+            Console.print(str);
         } catch(Exception e) {
             e.printStackTrace();
             return false;

@@ -7,10 +7,13 @@ import cn.hutool.core.lang.Console;
 import cn.hutool.core.lang.Dict;
 import cn.hutool.core.text.csv.CsvReader;
 import cn.hutool.core.text.csv.CsvUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.google.devtools.common.options.OptionsParser;
 import pers.ailurus.args.Options;
 import pers.ailurus.model.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
@@ -18,16 +21,21 @@ import java.util.concurrent.TimeoutException;
 public class Main {
 
     public static void main(String[] args) {
-        // 批量分析参数
+        // 分析参数
 //        args = new String[]{
 //                "--analysis",
 //                "--batch",
 //                "--csv_file", "C:\\Users\\ailur\\Documents\\iie_work\\maven\\target\\maven_50k_dataset.csv",
 //                "--output_path", "C:\\Users\\ailur\\Documents\\iie_work\\maven\\result"
 //        };
-        // 单个解析参数
+        // 解析参数
+//        args = new String[]{
+//                "--batch",
+//                "--csv_file", "C:\\Users\\ailur\\Documents\\iie_work\\maven\\target\\speculation_dataset.csv",
+//        };
         args = new String[] {
-                "--jar_file", "C:\\Users\\ailur\\Documents\\iie_work\\maven\\TPL\\al.bluecryst\\bluecrystal.deps.domain\\bluecrystal.deps.domain-1.5.0.jar",
+                "--jar_file", "D:\\Research\\Java TPL Predict\\difference_extract\\demo\\group_2\\cybrid-api-organization-java-v0.10.0.jar",
+                "--output_path", "D:\\Research\\Java TPL Predict\\difference_extract\\demo\\group_2"
         };
         OptionsParser parser = OptionsParser.newOptionsParser(Options.class);
         parser.parseAndExitUponError(args);
@@ -103,13 +111,28 @@ public class Main {
     }
 
     public static void matchBatch(String csvFile, String outputPath) {
-
+        CsvReader reader = CsvUtil.getReader();
+        List<MatchBean> info = reader.read(
+                ResourceUtil.getUtf8Reader(csvFile), MatchBean.class);
+        for (MatchBean mb : info) {
+            Console.print(mb);
+            String path = mb.getPath();
+            AnalysisPackage ap = Extractor.extract(path);
+            File temp = new File(path);
+            String fileName = temp.getName();
+            String file = outputPath + File.separator + fileName + ".json";
+            MyFileUtil.dacFile(file);
+            MyFileUtil.writeLine(JSONUtil.parseObj(ap).toStringPretty(), file);
+        }
     }
 
     public static void matchSingle(String jarFile, String outputPath) throws IOException {
-        DataOperator.initOperator();
-        List<Result> ans = Comparator.deduceTPL(jarFile);
-        Console.print(ans);
+        AnalysisPackage ap = Extractor.extract(jarFile);
+        JSONObject ans = JSONUtil.parseObj(ap);
+        File temp = new File(jarFile);
+        String file = outputPath + File.separator + temp.getName() +"_result.json";
+        MyFileUtil.dacFile(file);
+        MyFileUtil.writeLine(ans.toStringPretty(), file);
     }
 
     private static void matchSingleNet(String netFile, String outputPath) {

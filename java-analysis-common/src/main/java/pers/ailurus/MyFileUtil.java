@@ -2,6 +2,7 @@ package pers.ailurus;
 
 import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.lang.Console;
 import cn.hutool.core.text.csv.CsvData;
 import cn.hutool.core.text.csv.CsvReader;
 import cn.hutool.core.text.csv.CsvRow;
@@ -10,6 +11,7 @@ import cn.hutool.core.text.csv.CsvWriter;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.StrUtil;
 
+import cn.hutool.core.util.ZipUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.*;
@@ -48,7 +50,8 @@ public class MyFileUtil {
         if (checkExtract(filePath)) {
             return true;
         }
-        return CommonUtil.runCmd("7z x -y \"" + filePath + "\" -o\"" + target + "\"");
+        File tar = ZipUtil.unzip(filePath, target);
+        return tar.exists();
     }
 
     /**

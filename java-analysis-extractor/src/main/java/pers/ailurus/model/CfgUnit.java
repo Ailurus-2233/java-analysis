@@ -1,7 +1,10 @@
 package pers.ailurus.model;
 
+import cn.hutool.core.lang.Console;
+import fj.P;
 import lombok.Data;
 import soot.Unit;
+import soot.UnitBox;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -34,5 +37,9 @@ public class CfgUnit implements Serializable {
 
     public void setChild(int[] child) {
         this.child = child;
+    }
+
+    public void printUnit() {
+        Console.print("{}\n", this.unit);
     }
 }
