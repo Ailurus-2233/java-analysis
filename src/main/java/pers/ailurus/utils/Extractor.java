@@ -1,189 +1,249 @@
 package pers.ailurus.utils;
 
-import cn.hutool.core.lang.Console;
-import cn.hutool.core.util.HexUtil;
-import cn.hutool.crypto.digest.DigestUtil;
-import fj.Unit;
-import fj.data.Java;
-import pers.ailurus.models.CDGUnit;
-import pers.ailurus.models.Clazz;
-import pers.ailurus.models.Method;
-import pers.ailurus.models.Package;
-import sootup.core.inputlocation.AnalysisInputLocation;
-import sootup.core.jimple.common.stmt.Stmt;
-import sootup.core.model.Body;
-import sootup.core.model.SootClass;
-import sootup.core.model.SootField;
-import sootup.core.model.SootMethod;
-import sootup.core.types.Type;
-import sootup.java.bytecode.inputlocation.JavaClassPathAnalysisInputLocation;
-import sootup.java.core.JavaProject;
-import sootup.java.core.JavaSootClass;
-import sootup.java.core.language.JavaLanguage;
-import sootup.java.core.views.JavaView;
+import cn.hutool.core.lang.Dict;
+import cn.hutool.json.JSONUtil;
+import org.apache.commons.codec.digest.DigestUtils;
+import pers.ailurus.models.feature.CDG;
+import pers.ailurus.models.feature.FeatureClass;
+import pers.ailurus.models.feature.FeatureMethod;
+import pers.ailurus.models.feature.FeaturePackage;
+import soot.*;
+import soot.options.Options;
+import soot.tagkit.Tag;
+import soot.tagkit.VisibilityAnnotationTag;
+import soot.util.Chain;
 
-import java.io.IOException;
 import java.util.*;
-
 
 public class Extractor {
 
-    public static JavaProject project;
-    public static JavaView view;
-
-    public static void initSootup(String path, int javaVersion) {
-        AnalysisInputLocation<JavaSootClass> inputLocation = new JavaClassPathAnalysisInputLocation(path);
-        JavaLanguage language = new JavaLanguage(javaVersion);
-        project = JavaProject.builder(language).addInputLocation(inputLocation).build();
-        view = project.createFullView();
+    public static void initSoot(String path) {
+        G.reset();
+        Options.v().set_whole_program(true);
+        Options.v().set_prepend_classpath(true);
+        Options.v().set_no_bodies_for_excluded(true);
+        Options.v().set_allow_phantom_refs(true);
+        Options.v().set_process_dir(List.of(path));
+        Scene.v().loadNecessaryClasses();
     }
 
-    public static Package extract(String path) {
-        if (!FileOperator.isJarFile(path)) {
-            throw new RuntimeException("Not jar file");
-        }
-        Package analysisPackage = new Package();
-        String target = FileOperator.getExtractTargetPath(path);
-        if (FileOperator.extractJarFile(path, target)) {
-            // 解析解压结果
-            analysisPackage = analysisPackage(target);
-            analysisPackage.setMd5(execUniMd5(analysisPackage));
-        }
-        return analysisPackage;
-    }
 
-    public static Package analysisPackage(String target) {
-        initSootup(target, 17);
-        Collection<JavaSootClass> classChain = view.getClasses();
-        Package result = new Package();
-        result.setClassNum(classChain.size());
+    public static FeaturePackage analysisPackage(String path) {
+
+        // 解压jar
+//        String target = FileOperator.getExtractTargetPath(path);
+//        FileOperator.extractJarFile(path, target);
+
+        // 初始化 soot
+        initSoot(path);
+        FeaturePackage result = new FeaturePackage();
+
+        // 获取所有类的编号
+        Map<String, Integer> typeMap = new HashMap<>();
+        Chain<SootClass> classChain = Scene.v().getClasses();
+        Chain<SootClass> appClassChain = Scene.v().getApplicationClasses();
+
+        List<SootClass> classList = new ArrayList<>(classChain);
+        List<SootClass> appClassList = new ArrayList<>(appClassChain);
+
+        CDG cdg = new CDG(appClassList);
+
+        // 根据重要性排序
+        classList.sort((o1, o2) -> {
+            int o1Importance = getClassImportance(o1, cdg, appClassList);
+            int o2Importance = getClassImportance(o2, cdg, appClassList);
+            return o2Importance - o1Importance;
+        });
+
+        int index = 0;
+        Map<Integer, String> temp = new HashMap<>();
+        for (SootClass sc : classList) {
+            typeMap.put(sc.getName(), index++);
+            temp.put(index, sc.getName());
+        }
+
+        // 解析包级特征
+        result.setClassNum(appClassList.size());
+
         Set<String> packageSet = new HashSet<>();
-        List<Clazz> classList = new ArrayList<>(result.getClassNum());
+        List<FeatureClass> classes = new ArrayList<>(appClassList.size());
 
-        List<CDGUnit> cdg = getCdg(classChain);
         result.setCdg(cdg);
-        Map<String, Integer> dep = getDepMap(cdg);
-        Map<String, Integer> beDep = getBeDepMap(cdg);
-        for (SootClass sc : classChain) {
-            if ("module-info".equals(sc.getName())) continue;
-            // 设置包深度
-            String type = sc.getType().toString();
 
-            int packageDeep = type.split(".").length - 1;
+        FileOperator.writeFile(JSONUtil.toJsonPrettyStr(cdg.toDict()), path + ".cdg.json");
+
+        List<String> classMd5 = new ArrayList<>(appClassList.size());
+
+        int methodNum = 0;
+        int fieldNum = 0;
+
+        for (SootClass sc : appClassList) {
+            if (sc.getName().contains("module-info")) {
+                result.setClassNum(result.getClassNum() - 1);
+                continue;
+            }
+            // 设置包深度
+            int packageDeep = sc.getJavaPackageName().split("\\.").length;
             if (packageDeep > result.getPackageDeep()) {
                 result.setPackageDeep(packageDeep);
             }
-            Console.print("{}\n", type);
-            int temp = type.lastIndexOf(".");
-            if (temp == -1) {
-                packageSet.add("");
-            } else {
-                packageSet.add(type.substring(0, temp));
-            }
-            Clazz ac = analysisClass(sc);
-            List<Method> amList = new ArrayList<>(sc.getMethods().size());
-            Set<?extends SootMethod> methods = sc.getMethods();
-            for (SootMethod sm : methods) {
-//                amList.add(analysisMethod(sm));
-            }
-            ac.setMethods(amList);
-            ac.setNumOfDep(dep.get(ac.getClassType()));
-            ac.setNumOfBeDep(beDep.get(ac.getClassType()));
+            packageSet.add(sc.getJavaPackageName());
+            FeatureClass clazz = analysisClass(sc, result.getCdg(), typeMap);
+            classMd5.add(clazz.getMd5());
 
-            // 修改class的MD5 改为 classType + cdg的依赖关系
-//            ac.setMd5(DigestUtil.md5Hex(ac.getMd5() + ac.getNumOfDep() + ac.getNumOfBeDep()));
-            classList.add(ac);
+            methodNum += clazz.getMethodNum();
+            fieldNum += clazz.getFieldNum();
+
+            classes.add(clazz);
         }
+        String[] md5 = classMd5.toArray(new String[0]);
+        Arrays.sort(md5);
+
+        result.setMd5(DigestUtils.md5Hex(String.join("", md5)));
+
         result.setPackageNum(packageSet.size());
-        result.setClasses(classList);
+        result.setClasses(classes);
+
+        result.setMethodNum(methodNum);
+        result.setFieldNum(fieldNum);
 
         return result;
     }
 
-    private static Clazz analysisClass(SootClass sc) {
-        Clazz ac = new Clazz();
-        ac.setMd5(getClassMd5(sc));
-        ac.setClassType(sc.getType().toString());
-        ac.setModifiers(sc.getModifiers());
-        ac.modifiersVectorInit();
-        ac.setFieldNum(sc.getFields().size());
-        ac.setMethodNum(sc.getMethods().size());
-        ac.setInterfaceNum(sc.getInterfaces().size());
-        ac.setIsHasSuperClass("java.lang.Object".equals(sc.getSuperclass().get().toString()) ? 0 : 1);
-        return ac;
-    }
+    public static FeatureClass analysisClass(SootClass sc, CDG cdg, Map<String, Integer> type) {
+        FeatureClass clazz = new FeatureClass();
 
-    private static String getClassMd5(SootClass sc) {
-        String classFile = sc.getClassSource().toString();
-        try {
-            return FileOperator.getFileMd5(classFile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+        // 基础信息
+        clazz.setClassId(type.get(sc.getName()));
+        clazz.setPackageDeep(sc.getJavaPackageName().split("\\.").length);
+        clazz.setClassType(sc.getName());
+        clazz.setModifiers(sc.getModifiers());
+        clazz.setFieldNum(sc.getFieldCount());
+        clazz.setMethodNum(sc.getMethodCount());
+        clazz.setInterfaceNum(sc.getInterfaceCount());
+        clazz.setHasSuperClass("java.lang.Object".equals(sc.getSuperclass().getName()) ? 0 : 1);
 
-    private static Map<String, Integer> getBeDepMap(List<CDGUnit> cdg) {
-        Map<String, Integer> beDep = new HashMap<>(cdg.size());
-        for (CDGUnit c : cdg) {
-            beDep.put(c.getClassName(), 0);
+        int[] fieldTypes = new int[clazz.getFieldNum()];
+        int[] methodTypes = new int[clazz.getMethodNum()];
+        List<SootField> fields = sc.getFields().stream().toList();
+        for (int i = 0; i < clazz.getFieldNum(); i++) {
+            fieldTypes[i] = getTypeId(fields.get(i).getType().toString(), type);
         }
-        for (CDGUnit c : cdg) {
-            for (Integer i : c.getDependencies()) {
-                String name = cdg.get(i).getClassName();
-                beDep.put(name, beDep.get(name) + 1);
+        clazz.setFieldType(fieldTypes);
+
+        // 依赖关系
+        clazz.setDepNum(cdg.getDep().get(clazz.getClassType()));
+        clazz.setBeDepNum(cdg.getBeDep().get(clazz.getClassType()));
+
+        // 注解信息
+        List<Tag> tags = sc.getTags();
+        int annotationNum = 0;
+        for (Tag tag : tags) {
+            if (tag instanceof VisibilityAnnotationTag vat) {
+                annotationNum = vat.getAnnotations().size();
+                break;
             }
         }
-        return beDep;
+        clazz.setAnnotationNum(annotationNum);
+
+        // 方法特征分析
+        List<FeatureMethod> methods = new ArrayList<>(sc.getMethodCount());
+        List<SootMethod> sms = sc.getMethods().stream().toList();
+        String[] methodMd5 = new String[sc.getMethodCount()];
+        for (int i = 0; i < sms.size(); i++) {
+            methodTypes[i] = getTypeId(sms.get(i).getReturnType().toString(), type);
+            FeatureMethod fm = analysisMethod(sms.get(i), type);
+            methods.add(fm);
+            methodMd5[i] = fm.getMd5();
+        }
+        clazz.setMethods(methods);
+        clazz.setMethodType(methodTypes);
+        Arrays.sort(methodMd5);
+        clazz.setMd5(DigestUtils.md5Hex(String.join("", methodMd5)));
+        return clazz;
     }
 
-    private static Map<String, Integer> getDepMap(List<CDGUnit> cdg) {
-        Map<String, Integer> dep = new HashMap<>(cdg.size());
-        for (CDGUnit c : cdg) {
-            dep.put(c.getClassName(), c.getDependencies() == null ? 0 : c.getDependencies().length);
+    public static FeatureMethod analysisMethod(SootMethod sm, Map<String, Integer> type) {
+        FeatureMethod method = new FeatureMethod();
+        method.setModifier(sm.getModifiers());
+        method.setReturnType(getTypeId(sm.getReturnType().toString(), type));
+        method.setArgsNum(sm.getParameterCount());
+        int[] argsType = new int[method.getArgsNum()];
+        List<Type> types = sm.getParameterTypes();
+        for (int i = 0; i < method.getArgsNum(); i++) {
+            argsType[i] = getTypeId(types.get(i).toString(), type);
         }
-        return dep;
+        method.setArgsType(argsType);
+        method.setJimpleFeature(sm, type);
+        return method;
     }
 
-    private static List<CDGUnit> getCdg(Collection<JavaSootClass> classes) {
-        List<CDGUnit> cdg = new ArrayList<>();
-        Map<String, Integer> classMap = new HashMap<>(classes.size());
-        int i = 0;
-        for (SootClass sc : classes) {
-            if ("module-info".equals(sc.getName())) {
-                continue;
-            }
-            classMap.put(sc.getName(), i);
-            cdg.add(new CDGUnit(sc.getName(), i++));
-        }
-        for (SootClass sc : classes) {
-            // 从父类，属性，方法返回值，方法中单元左值类型获取依赖信息
-            if ("module-info".equals(sc.getName())) {
-                continue;
-            }
-            Set<String> temp = new HashSet<>();
-            temp.add(sc.getSuperclass().toString());
-            Set<? extends SootField> fields = sc.getFields();
-            for (SootField sf : fields) {
-                temp.add(sf.getType().toString());
-            }
-            List<Integer> dep = new ArrayList<>();
-            for (String s : temp) {
-                if (classMap.containsKey(s) && !s.equals(sc.getName())) {
-                    dep.add(classMap.get(s));
+    public static Dict getJimpleMd5(String path) {
+        Dict result = Dict.create();
+        initSoot(path);
+        Dict md5 = Dict.create();
+        Dict body = Dict.create();
+        List<SootClass> list = Scene.v().getApplicationClasses().stream().toList();
+        for (SootClass sc : list) {
+            for (SootMethod sm : sc.getMethods()) {
+                if (sm.isConcrete()) {
+                    body.put(sm.getSignature(), sm.retrieveActiveBody().toString());
+                    md5.put(sm.getSignature(), DigestUtils.md5Hex(sm.retrieveActiveBody().toString()));
+                } else {
+                    body.put(sm.getSignature(), "");
+                    md5.put(sm.getSignature(), "");
                 }
             }
-            cdg.get(classMap.get(sc.getName())).setDependencies(dep);
         }
-        return cdg;
+        result.put("md5", md5);
+        result.put("body", body);
+        return result;
     }
 
+    private static final Map<String, String> baseToClass = new HashMap<>();
 
-    private static String execUniMd5(Package analysisPackage) {
-        StringBuilder sb = new StringBuilder();
-        for (Clazz ac : analysisPackage.getClasses()) {
-            sb.append(ac.getMd5());
+    static {
+        baseToClass.put("void", "java.lang.Void");
+        baseToClass.put("boolean", "java.lang.Boolean");
+        baseToClass.put("byte", "java.lang.Byte");
+        baseToClass.put("short", "java.lang.Short");
+        baseToClass.put("int", "java.lang.Integer");
+        baseToClass.put("long", "java.lang.Long");
+        baseToClass.put("float", "java.lang.Float");
+        baseToClass.put("double", "java.lang.Double");
+        baseToClass.put("char", "java.lang.Character");
+    }
+
+    public static int getTypeId(String type, Map<String, Integer> typeMap) {
+        if (typeMap.containsKey(type)) {
+            return typeMap.get(type);
+        } else {
+            if (baseToClass.containsKey(type))
+                return typeMap.get(baseToClass.get(type));
+            else
+                return -1;
         }
-        return DigestUtil.md5Hex(sb.toString());
+    }
+
+    public static int getClassImportance(SootClass clazz, CDG cdg, List<SootClass> appClasses) {
+        // 重要性 = 属性数量+方法数量+接口数量+注解数量+依赖数量+被依赖数量
+        if (clazz.getName().contains("module-info")) {
+            return -1;
+        }
+        if (!appClasses.contains(clazz)) {
+            return 0;
+        }
+        int importance = clazz.getFieldCount() + clazz.getMethodCount() + clazz.getInterfaceCount();
+        List<Tag> tags = clazz.getTags();
+        for (Tag tag : tags) {
+            if (tag instanceof VisibilityAnnotationTag vat) {
+                importance += vat.getAnnotations().size();
+                break;
+            }
+        }
+        importance += cdg.getDep().get(clazz.getName());
+        importance += cdg.getBeDep().get(clazz.getName());
+        return importance;
     }
 
 }

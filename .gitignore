@@ -40,8 +40,10 @@ build/
 
 csv/
 jar/
-*.csv
+*.csv/
 result/
 target/
 
 .gradle
+
+test/
