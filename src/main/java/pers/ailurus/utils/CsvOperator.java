@@ -3,14 +3,6 @@ package pers.ailurus.utils;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.text.csv.CsvWriter;
 import cn.hutool.core.util.CharsetUtil;
-import pers.ailurus.models.database.DataBlock;
-import pers.ailurus.models.database.DataClass;
-import pers.ailurus.models.database.DataMethod;
-import pers.ailurus.models.database.DataPackage;
-import pers.ailurus.models.feature.CFGNode;
-import pers.ailurus.models.feature.FeatureClass;
-import pers.ailurus.models.feature.FeatureMethod;
-import pers.ailurus.models.feature.FeaturePackage;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -99,21 +91,6 @@ public class CsvOperator {
         relationMethodBlocks = new ArrayList<>();
     }
 
-    public static void addDataPackage(DataPackage dataPackage) {
-        dataPackages.add(dataPackage.toCSV());
-    }
-
-    public static void addDataClass(DataClass dataClass) {
-        dataClasses.add(dataClass.toCSV());
-    }
-
-    public static void addDataMethod(DataMethod dataMethod) {
-        dataMethods.add(dataMethod.toCSV());
-    }
-
-    public static void addDataBlock(DataBlock dataBlock) {
-        dataBlocks.add(dataBlock.toCSV());
-    }
 
     public static void addRelationPackageClass(String from, String to) {
         relationPackageClasses.add(new String[]{from, to});
@@ -151,20 +128,4 @@ public class CsvOperator {
         return new CsvWriter(path, CharsetUtil.CHARSET_UTF_8, true);
     }
 
-    public static void writeFeature(FeaturePackage fp, String groupId, String artifactId, String version) {
-        addDataPackage(new DataPackage(fp, groupId, artifactId, version));
-        for (FeatureClass fc : fp.getClasses()) {
-            addDataClass(new DataClass(fc));
-            addRelationPackageClass(fp.getMd5(), fc.getMd5());
-            for (FeatureMethod fm : fc.getMethods()) {
-                addDataMethod(new DataMethod(fm));
-                addRelationClassMethod(fc.getMd5(), fm.getMd5());
-                for (CFGNode node : fm.getCfg().getCfgNodes()) {
-                    addDataBlock(new DataBlock(node));
-                    addRelationMethodBlock(fm.getMd5(), node.getMd5());
-                }
-            }
-        }
-        write();
-    }
 }

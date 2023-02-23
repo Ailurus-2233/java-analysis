@@ -1,6 +1,5 @@
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Console;
-import cn.hutool.core.lang.Dict;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.text.csv.CsvData;
 import cn.hutool.core.text.csv.CsvReader;
@@ -15,9 +14,7 @@ import pers.ailurus.utils.CsvOperator;
 import pers.ailurus.utils.FileOperator;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.UnknownHostException;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +35,8 @@ public class Main {
             .put(5000, 5)
             .build();
 
+    private static int downloadFlag = 0;
+
     public static void main(String[] args) {
         OptionsParser parser = OptionsParser.newOptionsParser(Args.class);
         parser.parseAndExitUponError(args);
@@ -48,9 +47,7 @@ public class Main {
             return;
         }
         switch (options.mode) {
-            case "analysis_1":
-                break;
-            case "analysis_2":
+            case "analysis":
                 break;
             case "predict":
                 break;
@@ -93,6 +90,7 @@ public class Main {
                 }
                 int t = i;
                 executor.execute(() -> {
+                    downloadFlag++;
                     CsvRow row = rows.get(t);
                     String url = row.get(0);
                     String group_id = row.get(1);
@@ -104,10 +102,18 @@ public class Main {
                     if (t % 500 == 0) {
                         CsvUtil.getWriter(input, CharsetUtil.CHARSET_UTF_8).write(csv);
                     }
+                    downloadFlag--;
                 });
-
+            }
+            while (downloadFlag > 0) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
             CsvUtil.getWriter(input, CharsetUtil.CHARSET_UTF_8).write(csv);
+            executor.shutdown();
         } else {
             download(input, output);
         }

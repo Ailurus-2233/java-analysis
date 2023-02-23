@@ -65,6 +65,11 @@
             <version>1.18.24</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>tech.tuister</groupId>
+            <artifactId>ssdeep-java</artifactId>
+            <version>0.0.1</version>
+        </dependency>
     </dependencies>
 
     <repositories>

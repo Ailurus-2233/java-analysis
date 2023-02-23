@@ -1,65 +1,112 @@
 package pers.ailurus.models.feature;
 
+import cn.hutool.core.lang.Console;
 import cn.hutool.core.lang.Dict;
 import cn.hutool.crypto.digest.DigestUtil;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import pers.ailurus.utils.Analysis;
+import soot.SootClass;
+import soot.SootField;
+import soot.SootMethod;
+import soot.tagkit.Tag;
+import soot.tagkit.VisibilityAnnotationTag;
 
-import java.util.List;
+import java.util.*;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class FeatureClass {
+
+    // 根据方法计算的唯一标识
     private String md5;
 
-    private int classId;
-    private int modifiers;
-    private int packageDeep;
-    private int interfaceNum;
-    private int annotationNum;
-    private int methodNum;
-    private int[] methodType;
-    private int fieldNum;
-    private int[] fieldType;
-    private int hasSuperClass;
-    private int depNum;
-    private int beDepNum;
-    private List<FeatureMethod> methods;
+    // 基本信息
+    private int id;
+    private String name;
 
-    private String classType;
+    // 特征
+    private int[] base;     // [接口数量，注解数量，属性数量，方法数量]
+    private int[] field;    // [mapping(x) for x in filed]
 
-    public void setMd5(String md5) {
-        this.md5 = DigestUtil.md5Hex(String.format("%s_%d_%d_%d_%d_%d_%d_%d_%d",
-                md5,
-                classId,
-                modifiers,
-                packageDeep,
-                interfaceNum,
-                annotationNum,
-                hasSuperClass,
-                depNum,
-                beDepNum
-        ));
+    // 方法列表
+    private FeatureMethod[] methods;
+
+    public FeatureClass(int id, String name) {
+        this.id = id;
+        this.name = name;
+
+        this.base = new int[4];
+    }
+
+    public void analysisClass(SootClass clazz, HashMap<String, Integer> classMap) {
+        // 基础特征
+        this.base[0] = clazz.getInterfaceCount();
+        this.base[2] = clazz.getFields().size();
+        this.base[3] = clazz.getMethods().size();
+        List<Tag> tags = clazz.getTags();
+        int annotationNum = 0;
+        for (Tag tag : tags) {
+            if (tag instanceof VisibilityAnnotationTag vat) {
+                annotationNum = vat.getAnnotations().size();
+                break;
+            }
+        }
+        this.base[1] = annotationNum;
+
+        // 属性特征
+        this.field = new int[this.base[2]];
+        List<SootField> fields = new ArrayList<>(clazz.getFields());
+        for (int i = 0; i < fields.size(); i++) {
+            SootField field = fields.get(i);
+            String type = field.getType().toString();
+            this.field[i] = Analysis.getTypeId(type, classMap);
+        }
+        Arrays.sort(this.field);
+
+        // 方法特征
+        List<FeatureMethod> methods = new ArrayList<>();
+        List<SootMethod> sms = new ArrayList<>(clazz.getMethods());
+        for (SootMethod sm : sms) {
+            FeatureMethod method = new FeatureMethod();
+            if (method.analysisMethod(sm, classMap))
+                methods.add(method);
+            else
+                this.base[3]--;
+        }
+        methods.sort((o1, o2) -> {
+            int[] base1 = o1.getBase();
+            int[] base2 = o2.getBase();
+            int ans = base1[0] - base2[0] == 0 ? base1[1] - base2[1] : base1[0] - base2[0];
+            if (ans != 0) {
+                return ans;
+            }
+            int len1 = o1.getParam().length;
+            int len2 = o2.getParam().length;
+            if (len1 != len2) {
+                return len1 - len2;
+            }
+            len1 = o1.getInvoke().length;
+            len2 = o2.getInvoke().length;
+            return len1 - len2;
+        });
+        this.methods = methods.toArray(new FeatureMethod[0]);
+
+        // 计算md5
+        for (FeatureMethod method : this.methods) {
+            this.md5 += method.getMd5();
+        }
+        this.md5 = DigestUtil.md5Hex(this.md5);
     }
 
     public Dict toDict() {
-        Dict result =  Dict.create()
-                .set("class_id", classId)
-                .set("class_type", classType)
-                .set("modifiers", modifiers)
-                .set("package_deep", packageDeep)
-                .set("interface_num", interfaceNum)
-                .set("annotation_num", annotationNum)
-                .set("method_num", methodNum)
-                .set("method_type", methodType)
-                .set("field_num", fieldNum)
-                .set("field_type", fieldType)
-                .set("has_super_class", hasSuperClass)
-                .set("dep_num", depNum)
-                .set("be_dep_num", beDepNum);
-        Dict method = Dict.create();
-        for (FeatureMethod fm : this.methods) {
-            method.set(fm.getMd5(), fm.toDict());
-        }
-        result.set("methods", method);
-        return result;
+        return Dict.create()
+                .set("id", this.id)
+                .set("name", this.name)
+                .set("base", this.base)
+                .set("field", this.field)
+                .set("methods", Arrays.stream(this.methods).map(FeatureMethod::toDict).toArray());
     }
 }
