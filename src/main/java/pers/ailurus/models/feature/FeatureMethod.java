@@ -110,7 +110,7 @@ public class FeatureMethod {
             md5Builder.append(block.getBody().toString());
             cfgBuilder.append(String.format("%d:%s;", i, String.join(",", succs.toString())));
         }
-        this.cfg = cfgBuilder.toString();
+        this.cfg = cfgBuilder.toString().replace(" ", "");
         this.md5 = DigestUtil.md5Hex(md5Builder.toString());
 //        this.cfg = FuzzyHashing.fuzzyHash(cfgBuilder.toString().getBytes());
 
@@ -120,6 +120,15 @@ public class FeatureMethod {
     public Dict toDict() {
         return Dict.create()
                 .set("md5", this.md5)
+                .set("base", this.base)
+                .set("param", this.param)
+                .set("invoke", this.invoke)
+                .set("constant", this.constant)
+                .set("cfg", this.cfg);
+    }
+
+    public Dict toSave() {
+        return Dict.create()
                 .set("base", this.base)
                 .set("param", this.param)
                 .set("invoke", this.invoke)

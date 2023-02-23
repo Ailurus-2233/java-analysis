@@ -8,7 +8,7 @@ public class Args extends OptionsBase {
     @Option(
             name = "mode",
             abbrev = 'm',
-            help = "Mode of the program: analysis_1, analysis_2 , predict, download.",
+            help = "Mode of the program: analysis , predict, download.",
             defaultValue = "predict"
     )
     public String mode;
@@ -37,6 +37,43 @@ public class Args extends OptionsBase {
     )
     public String output;
 
+    @Option(
+            name = "config",
+            abbrev = 'c',
+            help = "Database Config file path.",
+            defaultValue = "./config.json"
+    )
+    public String config;
 
+    @Option(
+            name = "group",
+            abbrev = 'g',
+            help = "Group id of the project.",
+            defaultValue = ""
+    )
+    public String groupId;
 
+    @Option(
+            name = "artifact",
+            abbrev = 'a',
+            help = "Artifact id of the project.",
+            defaultValue = ""
+    )
+    public String artifactId;
+
+    @Option(
+            name = "version",
+            abbrev = 'v',
+            help = "Version of the project.",
+            defaultValue = ""
+    )
+    public String version;
+
+    @Option(
+            name = "thread",
+            abbrev = 't',
+            help = "Thread number of the download mode.",
+            defaultValue = "10"
+    )
+    public int thread;
 }

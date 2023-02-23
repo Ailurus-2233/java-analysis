@@ -1,4 +1,5 @@
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.file.FileReader;
 import cn.hutool.core.lang.Console;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.text.csv.CsvData;
@@ -6,11 +7,15 @@ import cn.hutool.core.text.csv.CsvReader;
 import cn.hutool.core.text.csv.CsvRow;
 import cn.hutool.core.text.csv.CsvUtil;
 import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
 import cn.hutool.log.LogFactory;
+import com.google.devtools.common.options.Option;
 import com.google.devtools.common.options.OptionsParser;
+import pers.ailurus.models.feature.FeaturePackage;
+import pers.ailurus.utils.Analysis;
 import pers.ailurus.utils.Args;
-import pers.ailurus.utils.CsvOperator;
+import pers.ailurus.utils.Config;
 import pers.ailurus.utils.FileOperator;
 
 import java.io.File;
@@ -48,11 +53,12 @@ public class Main {
         }
         switch (options.mode) {
             case "analysis":
+                analysis(options);
                 break;
             case "predict":
                 break;
             case "download":
-                download(options.input, options.output, options.isBatch);
+                download(options);
                 break;
             default:
                 Console.print("Unknown mode: {}\n", options.mode);
@@ -71,18 +77,18 @@ public class Main {
         return data;
     }
 
-    public static void download(String input, String output, boolean batch) {
-        if (batch) {
+    public static void download(Args option) {
+        if (option.isBatch) {
             // 如果不是csv文件，直接返回
-            if (!input.endsWith(".csv")) {
+            if (!option.input.endsWith(".csv")) {
                 log.error("The input file is not a csv file!");
                 return;
             }
-            CsvData csv = loadCSV(input);
+            CsvData csv = loadCSV(option.input);
             List<CsvRow> rows = csv.getRows();
             // CSV 的列包括 url,group_id,article_id,version,status
             // 多线程下载
-            ExecutorService executor = Executors.newFixedThreadPool(8);
+            ExecutorService executor = Executors.newFixedThreadPool(option.thread);
             for (int i = 1; i < rows.size(); i++) {
                 String status = rows.get(i).get(4);
                 if (!("0".equals(status) || "-1".equals(status))) {
@@ -96,11 +102,11 @@ public class Main {
                     String group_id = row.get(1);
                     String article_id = row.get(2);
                     String version = row.get(3);
-                    String outputPath = FileUtil.file(output, group_id, article_id, String.format("%s-%s.jar", article_id, version)).getAbsolutePath();
+                    String outputPath = FileUtil.file(option.output, group_id, article_id, String.format("%s-%s.jar", article_id, version)).getAbsolutePath();
                     row.set(4, String.valueOf(download(url, outputPath)));
                     // 保存csv
                     if (t % 500 == 0) {
-                        CsvUtil.getWriter(input, CharsetUtil.CHARSET_UTF_8).write(csv);
+                        CsvUtil.getWriter(option.input, CharsetUtil.CHARSET_UTF_8).write(csv);
                     }
                     downloadFlag--;
                 });
@@ -112,10 +118,10 @@ public class Main {
                     e.printStackTrace();
                 }
             }
-            CsvUtil.getWriter(input, CharsetUtil.CHARSET_UTF_8).write(csv);
+            CsvUtil.getWriter(option.input, CharsetUtil.CHARSET_UTF_8).write(csv);
             executor.shutdown();
         } else {
-            download(input, output);
+            download(option.input, option.output);
         }
         log.info("The download task is complete!");
     }
@@ -129,26 +135,15 @@ public class Main {
                 fileSize = FileOperator.getNetFileSize(input);
             }
             // 如果文件已经存在，且大小一致，则跳过
-            File target = new File(output);
-            if (!FileOperator.isFile(target)) {
-                FileUtil.mkdir(output);
-                target = FileUtil.file(output, input.substring(input.lastIndexOf("/") + 1));
-            }
+            File target = getTarget(input, output, "jar");
             if (target.exists() && FileUtil.size(target) == fileSize) {
                 log.info("The file already exists, skip download!");
                 return 1;
             }
-            log.info("File size: {}", fileSize);
-            // 如果文件过大，跳过
-            if (fileSize > downloadMaxSize) {
-                log.error("The file is too large, skip download!");
-                return -2;
-            }
-            // 如果文件过小，跳过
-            if (fileSize < 1024 && fileSize > 0) {
-                log.error("The file is too small, skip download!");
-                return -3;
-            }
+
+            // 检查文件大小
+            if (checkSize(fileSize) != 0) return checkSize(fileSize);
+
             // 下载文件
             log.info("Start downloading...");
             output = FileOperator.downloadFile(input, FileUtil.file(output));
@@ -162,18 +157,58 @@ public class Main {
         return 1;
     }
 
-    public static void analysis(String input, String output, boolean isBatch, String mode) {
-        if (isBatch) {
-            // 初始化数据存储文件
-            CsvOperator.init(output);
-
-            CsvData csv = loadCSV(input);
-            // CSV 的列包括 group_id,article_id,version,file_path
-
-        } else {
-            download(input, output);
+    public static int checkSize(long fileSize) {
+        log.info("File size: {}", fileSize);
+        // 如果文件过大，跳过
+        if (fileSize > downloadMaxSize) {
+            log.error("The file is too large, skip download!");
+            return -2;
         }
-        log.info("The analysis is complete!");
+        // 如果文件过小，跳过
+        if (fileSize < 1024 && fileSize > 0) {
+            log.error("The file is too small, skip download!");
+            return -3;
+        }
+        return 0;
     }
 
+    public static File getTarget(String input, String output, String fileType) {
+        File target = new File(output);
+        if (!FileOperator.isFile(target)) {
+            FileUtil.mkdir(output);
+            String fileName = input.substring(input.lastIndexOf("/") + 1);
+            fileName = fileName.substring(0, fileName.lastIndexOf(".") + 1);
+            target = FileUtil.file(output, fileName + fileType);
+        }
+        return target;
+    }
+
+    public static void analysis(Args option) {
+        if (option.isBatch) {
+
+        } else {
+            analysis(option.input, option.output, option.config, option.groupId, option.artifactId, option.version);
+        }
+    }
+
+    public static void analysis(String input, String output, String configPath, String group, String artifact, String version) {
+        // 判断输入文件是否是jar文件
+        if (!input.endsWith(".jar")) {
+            log.error("The input file is not a jar file!");
+            return;
+        }
+
+        // 读取配置文件
+        FileReader fileReader = new FileReader(configPath);
+        Config config = JSONUtil.toBean(fileReader.readString(), Config.class);
+
+        // 分析jar文件
+        FeaturePackage fp = Analysis.analysisPackage(input, group, artifact, version);
+        if (config.isSave) {
+            // TODO 保存到数据库
+        }
+
+        // 保存到文件
+        FileOperator.writeFile(JSONUtil.toJsonStr(fp.toSave()), getTarget(input, output, "json").getAbsolutePath());
+    }
 }

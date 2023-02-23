@@ -39,10 +39,11 @@ public class Analysis {
         CDG cdg = new CDG(appClassList, libClassList, phantomClassList);
 
         FeaturePackage featurePackage = new FeaturePackage(groupId, artifactId, version);
-        featurePackage.analysisPackage(appClassList, cdg.getClassMap());
+        featurePackage.analysisPackage(appClassList, cdg);
 
         return featurePackage;
     }
+
 
     public static int getTypeId(String clazz, Map<String, Integer> classMap) {
         int id = classMap.getOrDefault(clazz, -1);

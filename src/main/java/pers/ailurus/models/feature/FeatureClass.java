@@ -28,6 +28,7 @@ public class FeatureClass {
     private String name;
 
     // 特征
+    private int modifier;
     private int[] base;     // [接口数量，注解数量，属性数量，方法数量]
     private int[] field;    // [mapping(x) for x in filed]
 
@@ -55,6 +56,16 @@ public class FeatureClass {
             }
         }
         this.base[1] = annotationNum;
+
+        if (clazz.isStatic()) {
+            this.modifier += 1;
+        }
+        if (clazz.isSynchronized()) {
+            this.modifier += 2;
+        }
+        if (clazz.isInterface()) {
+            this.modifier += 4;
+        }
 
         // 属性特征
         this.field = new int[this.base[2]];
@@ -104,9 +115,20 @@ public class FeatureClass {
     public Dict toDict() {
         return Dict.create()
                 .set("id", this.id)
+                .set("md5", this.md5)
                 .set("name", this.name)
+                .set("modifier", this.modifier)
                 .set("base", this.base)
                 .set("field", this.field)
                 .set("methods", Arrays.stream(this.methods).map(FeatureMethod::toDict).toArray());
+    }
+
+    public Dict toSave() {
+        return Dict.create()
+                .set("id", this.id)
+                .set("modifier", this.modifier)
+                .set("base", this.base)
+                .set("field", this.field)
+                .set("methods", Arrays.stream(this.methods).map(FeatureMethod::toSave).toArray());
     }
 }

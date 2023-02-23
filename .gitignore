@@ -47,3 +47,5 @@ target/
 .gradle
 
 test/
+
+output/
