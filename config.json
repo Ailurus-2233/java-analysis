@@ -1,3 +1,9 @@
 {
-  "isSave": false
+  "db_save": true,
+  "url": "127.0.0.1",
+  "port": "27017",
+  "database": "java_analysis",
+  "collection": "test",
+  "user": "",
+  "password": ""
 }

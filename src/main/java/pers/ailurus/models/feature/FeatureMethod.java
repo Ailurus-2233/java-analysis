@@ -27,6 +27,7 @@ public class FeatureMethod {
 
     // 方法的基本标签
     private int[] base; // [访问修饰符，返回类型]
+    private String name; // 函数名称
 
     // 参数特征
     private int[] param; // [mapping(x) for x in param]

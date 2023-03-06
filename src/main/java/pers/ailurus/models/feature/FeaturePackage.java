@@ -16,6 +16,7 @@ import java.util.*;
 public class FeaturePackage {
 
     private String md5; // 根据class的MD5集合生成的标识
+    private long analysisTime; // 分析时间
 
     // 基本信息
     private String groupId;
@@ -100,6 +101,7 @@ public class FeaturePackage {
                 .set("cdg_level1", this.cdg.getLevel1Finger())
                 .set("cdg_level2", this.cdg.getLevel2Finger())
                 .set("cdg_level3", this.cdg.getLevel3Finger())
-                .set("classes", Arrays.stream(this.classes).map(FeatureClass::toSave).toArray());
+                .set("classes", Arrays.stream(this.classes).map(FeatureClass::toSave).toArray())
+                .set("analysis_time", this.analysisTime);
     }
 }
