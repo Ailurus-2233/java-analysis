@@ -1,12 +1,17 @@
 package pers.ailurus.models.feature;
 
+import cn.hutool.core.lang.Console;
 import cn.hutool.core.lang.Dict;
 import cn.hutool.crypto.digest.DigestUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pers.ailurus.utils.Analysis;
 import soot.SootMethod;
+import soot.UnitBox;
+import soot.ValueBox;
 import soot.jimple.*;
 import soot.toolkits.graph.Block;
 import soot.toolkits.graph.BriefBlockGraph;
@@ -24,6 +29,7 @@ public class FeatureMethod {
 
     // 根据方法计算的唯一标识
     private String md5;
+    private String body;
 
     // 方法的基本标签
     private int[] base; // [访问修饰符，返回类型]
@@ -37,6 +43,17 @@ public class FeatureMethod {
     private String constant; // 常量
     private String cfg; // cfg
 
+    public FeatureMethod(JSONObject json) {
+        this.base = JSONUtil.toList(json.getJSONArray("base"), int.class)
+                .stream().mapToInt(Integer::valueOf).toArray();
+        this.param = JSONUtil.toList(json.getJSONArray("param"), int.class)
+                .stream().mapToInt(Integer::valueOf).toArray();
+        this.invoke = JSONUtil.toList(json.getJSONArray("invoke"), int.class)
+                .stream().mapToInt(Integer::valueOf).toArray();
+        this.constant = json.getStr("constant");
+        this.cfg = json.getStr("cfg");
+    }
+
     public boolean analysisMethod(SootMethod method, HashMap<String, Integer> classMap) {
 
         if (!method.isConcrete()) {
@@ -46,10 +63,11 @@ public class FeatureMethod {
         JimpleBody body;
         try {
             body = (JimpleBody) method.retrieveActiveBody();
-//            this.md5 = DigestUtil.md5Hex(body.toString());
         } catch (Exception e) {
             return false;
         }
+        this.body = body.toString().replace("\n", "").replace("\r", "").replace(" ", "");
+        this.md5 = DigestUtil.md5Hex(this.body, "UTF-8");
 
         // 基础特征
         this.base = new int[2];
@@ -63,6 +81,10 @@ public class FeatureMethod {
         if (method.isNative()) {
             this.base[0] += 4;
         }
+        if (method.isAbstract()) {
+            this.base[0] += 8;
+        }
+
         this.base[1] = Analysis.getTypeId(method.getReturnType().toString(), classMap);
 
         // 参数特征
@@ -78,13 +100,15 @@ public class FeatureMethod {
         body.getUnits().forEach(unit -> {
             if (unit instanceof InvokeStmt invokeStmt) {
                 invokeList.add(Analysis.getTypeId(invokeStmt.getInvokeExpr().getMethod().getDeclaringClass().getName(), classMap));
-            } else if (unit instanceof AssignStmt assignStmt) {
-                if (assignStmt.getRightOp() instanceof Constant) {
-                    String temp = assignStmt.getRightOp().toString();
-                    if (temp.startsWith("\"") && temp.endsWith("\""))
-                        constantList.add(temp.substring(1, temp.length() - 1));
-                    else
-                        constantList.add(temp);
+            } else {
+                for (ValueBox box : unit.getUseAndDefBoxes()) {
+                    if (box.getValue() instanceof Constant cons) {
+                        String temp = cons.toString();
+                        if (temp.startsWith("\"") && temp.endsWith("\""))
+                            constantList.add(temp.substring(1, temp.length() - 1));
+                        else
+                            constantList.add(temp);
+                    }
                 }
             }
         });
@@ -101,18 +125,18 @@ public class FeatureMethod {
         BriefBlockGraph blocks = new BriefBlockGraph(body);
         StringBuilder cfgBuilder = new StringBuilder();
         ArrayList<Block> blockList = new ArrayList<>(blocks.getBlocks());
-        StringBuilder md5Builder = new StringBuilder();
+//        StringBuilder md5Builder = new StringBuilder();
         for (int i = 0; i < blockList.size(); i++) {
             Block block = blockList.get(i);
             List<Integer> succs = new ArrayList<>();
             for (Block succ : block.getSuccs()) {
                 succs.add(blockList.indexOf(succ));
             }
-            md5Builder.append(block.getBody().toString());
+//            md5Builder.append(block.getBody().toString());
             cfgBuilder.append(String.format("%d:%s;", i, String.join(",", succs.toString())));
         }
         this.cfg = cfgBuilder.toString().replace(" ", "");
-        this.md5 = DigestUtil.md5Hex(md5Builder.toString());
+//        this.md5 = DigestUtil.md5Hex(md5Builder.toString(), "UTF-8");
 //        this.cfg = FuzzyHashing.fuzzyHash(cfgBuilder.toString().getBytes());
 
         return true;
@@ -122,7 +146,9 @@ public class FeatureMethod {
         return Dict.create()
                 .set("md5", this.md5)
                 .set("base", this.base)
+                .set("name", this.name)
                 .set("param", this.param)
+                .set("body", this.body)
                 .set("invoke", this.invoke)
                 .set("constant", this.constant)
                 .set("cfg", this.cfg);

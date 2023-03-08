@@ -3,13 +3,19 @@ package pers.ailurus.models.feature;
 import cn.hutool.core.lang.Console;
 import cn.hutool.core.lang.Dict;
 import cn.hutool.crypto.digest.DigestUtil;
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import pers.ailurus.utils.Analysis;
+import soot.JastAddJ.Annotation;
 import soot.SootClass;
 import soot.SootField;
 import soot.SootMethod;
+import soot.jimple.JimpleBody;
+import soot.tagkit.AnnotationTag;
 import soot.tagkit.Tag;
 import soot.tagkit.VisibilityAnnotationTag;
 
@@ -42,7 +48,24 @@ public class FeatureClass {
         this.base = new int[4];
     }
 
+    public FeatureClass(JSONObject json) {
+        this.id = json.getInt("id");
+        this.name = json.getStr("name");
+
+        this.modifier = json.getInt("modifier");
+        this.base = JSONUtil.toList(json.getJSONArray("base"), int.class)
+                .stream().mapToInt(Integer::valueOf).toArray();
+        this.field = JSONUtil.toList(json.getJSONArray("field"), int.class)
+                .stream().mapToInt(Integer::valueOf).toArray();
+        JSONArray methods = json.getJSONArray("methods");
+        this.methods = new FeatureMethod[methods.size()];
+        for (int i = 0; i < methods.size(); i++) {
+            this.methods[i] = new FeatureMethod(methods.getJSONObject(i));
+        }
+    }
+
     public void analysisClass(SootClass clazz, HashMap<String, Integer> classMap) {
+
         // 基础特征
         this.base[0] = clazz.getInterfaceCount();
         this.base[2] = clazz.getFields().size();
@@ -52,6 +75,9 @@ public class FeatureClass {
         for (Tag tag : tags) {
             if (tag instanceof VisibilityAnnotationTag vat) {
                 annotationNum = vat.getAnnotations().size();
+                for (AnnotationTag ann : vat.getAnnotations()) {
+                    Console.print("");
+                }
                 break;
             }
         }
@@ -106,10 +132,11 @@ public class FeatureClass {
         this.methods = methods.toArray(new FeatureMethod[0]);
 
         // 计算md5
+        StringBuilder sb = new StringBuilder();
         for (FeatureMethod method : this.methods) {
-            this.md5 += method.getMd5();
+            sb.append(method.getMd5());
         }
-        this.md5 = DigestUtil.md5Hex(this.md5);
+        this.md5 = DigestUtil.md5Hex(sb.toString(), "UTF-8");
     }
 
     public Dict toDict() {

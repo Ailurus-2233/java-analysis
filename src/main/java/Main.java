@@ -51,6 +51,7 @@ public class Main {
                 analysis(options);
                 break;
             case "predict":
+                predict(options);
                 break;
             case "download":
                 download(options);
@@ -64,7 +65,8 @@ public class Main {
 
     public static void printUsage(OptionsParser parser) {
         Console.print("Usage: java -jar analysis.jar OPTIONS\n");
-        Console.print("{}\n", parser.describeOptions(Collections.emptyMap(), OptionsParser.HelpVerbosity.LONG));
+        Console.print("{}\n", parser.describeOptions(Collections.emptyMap(),
+                OptionsParser.HelpVerbosity.LONG));
     }
 
     public static CsvData loadCSV(String path) {
@@ -97,7 +99,8 @@ public class Main {
                     String group_id = row.get(1);
                     String article_id = row.get(2);
                     String version = row.get(3);
-                    String outputPath = FileUtil.file(option.output, group_id, article_id, String.format("%s-%s.jar", article_id, version)).getAbsolutePath();
+                    String outputPath = FileUtil.file(option.output, group_id, article_id,
+                            String.format("%s-%s.jar", article_id, version)).getAbsolutePath();
                     row.set(4, download(url, outputPath));
                     // 保存csv
                     if (t % 500 == 0) {
@@ -187,7 +190,8 @@ public class Main {
             if (StrUtil.isEmpty(config.user)) {
                 Database.init(config.url, config.port, config.database, config.collection);
             } else {
-                Database.init(config.url, config.port, config.user, config.password, config.database, config.collection);
+                Database.init(config.url, config.port, config.user, config.password,
+                        config.database, config.collection);
             }
         }
         if (option.isBatch) {
@@ -224,7 +228,8 @@ public class Main {
         log.info("The analysis task is complete!");
     }
 
-    public static void analysis(String input, String output, Config config, String group, String artifact, String version) {
+    public static void analysis(String input, String output, Config config, String group,
+                                String artifact, String version) {
         log.info("Input: {}", input);
         long time = System.currentTimeMillis();
         // 判断输入文件是否是jar文件
@@ -242,8 +247,29 @@ public class Main {
             log.info("Save to database!");
         }
         // 保存到文件
-        FileOperator.writeFile(JSONUtil.toJsonStr(fp.toDict()), getTarget(input, output, "json").getAbsolutePath());
+        FileOperator.writeFile(JSONUtil.toJsonStr(fp.toDict()),
+                getTarget(input, output, "json").getAbsolutePath());
+        FileOperator.writeFile(JSONUtil.toJsonStr(fp.getCdg().toDict()),
+                getTarget(input, output, "cdg.json").getAbsolutePath());
 
         log.info("Analysis finished! Time: {} ms", (time2 - time));
+    }
+
+    private static void predict(Args options) {
+
+    }
+
+    private static void predict(String input, String output, Config config) {
+        log.info("Input: {}", input);
+        long time = System.currentTimeMillis();
+        // 判断输入文件是否是jar文件
+        if (!input.endsWith(".jar")) {
+            log.error("The input file is not a jar file!");
+            return;
+        }
+        log.info("Analysis start...");
+        // 分析jar文件
+        FeaturePackage fp = Analysis.analysisPackage(input, "", "", "");
+
     }
 }

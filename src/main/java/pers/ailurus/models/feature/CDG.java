@@ -50,12 +50,14 @@ public class CDG {
 
         libClasses.sort(Comparator.comparing(SootClass::getName));
         for (SootClass sc : libClasses) {
+            if (sc.getName().equals("sun.io.Win32ErrorMode")) continue;
             this.classMap.put(sc.getName(), i);
             this.allNode.add(new CDGNode(i++, sc.getName(), 2));
         }
 
         phantomClasses.sort(Comparator.comparing(SootClass::getName));
         for (SootClass sc : phantomClasses) {
+            if (sc.getName().equals("sun.io.Win32ErrorMode")) continue;
             this.classMap.put(sc.getName(), i);
             this.allNode.add(new CDGNode(i++, sc.getName(), 3));
         }
@@ -136,7 +138,7 @@ public class CDG {
         for (CDGNode node : this.level1) {
             sb.append(node.getHashString());
         }
-        this.level1Finger = DigestUtil.md5Hex(sb.toString());
+        this.level1Finger = DigestUtil.md5Hex(sb.toString(), "UTF-8");
     }
 
 
@@ -175,7 +177,7 @@ public class CDG {
         for (CDGNode node : this.level2) {
             sb.append(node.getHashString());
         }
-        this.level2Finger = SecureUtil.md5(sb.toString());
+        this.level2Finger = DigestUtil.md5Hex(sb.toString(), "UTF-8");
     }
 
     private void initLevel3(List<SootClass> appClass) {
@@ -229,7 +231,7 @@ public class CDG {
         for (CDGNode node : this.level3) {
             sb.append(node.getHashString());
         }
-        this.level3Finger = SecureUtil.md5(sb.toString());
+        this.level3Finger = DigestUtil.md5Hex(sb.toString(), "UTF-8");
     }
 
 

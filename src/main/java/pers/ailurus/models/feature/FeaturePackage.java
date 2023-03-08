@@ -3,6 +3,10 @@ package pers.ailurus.models.feature;
 
 import cn.hutool.core.lang.Dict;
 import cn.hutool.crypto.digest.DigestUtil;
+import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
+import com.mongodb.util.JSON;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -40,6 +44,20 @@ public class FeaturePackage {
         this.base = new int[5];
     }
 
+    public FeaturePackage(JSONObject json) {
+        this.md5 = json.getStr("md5");
+        this.groupId = json.getStr("groupId");
+        this.artifactId = json.getStr("artifactId");
+        this.version = json.getStr("version");
+        this.base = JSONUtil.toList(json.getJSONArray("base"), int.class)
+                .stream().mapToInt(Integer::valueOf).toArray();
+        JSONArray classes = json.getJSONArray("classes");
+        this.classes = new FeatureClass[classes.size()];
+        for (int i = 0; i < classes.size(); i++) {
+            this.classes[i] = new FeatureClass(classes.getJSONObject(i));
+        }
+    }
+
     public void analysisPackage(List<SootClass> classes, CDG cdg) {
         // 基础特征
         this.base[0] = classes.size(); // 类数量
@@ -75,7 +93,7 @@ public class FeaturePackage {
         for (FeatureClass featureClass : this.classes) {
             sb.append(featureClass.getMd5());
         }
-        this.md5 = DigestUtil.md5Hex(sb.toString());
+        this.md5 = DigestUtil.md5Hex(sb.toString(), "UTF-8");
     }
 
     public Dict toDict() {
@@ -103,5 +121,15 @@ public class FeaturePackage {
                 .set("cdg_level3", this.cdg.getLevel3Finger())
                 .set("classes", Arrays.stream(this.classes).map(FeatureClass::toSave).toArray())
                 .set("analysis_time", this.analysisTime);
+    }
+
+    public Dict getBaseDict() {
+        return Dict.create()
+                .set("md5", this.md5)
+                .set("groupId", this.groupId)
+                .set("artifactId", this.artifactId)
+                .set("version", this.version)
+                .set("base", this.base)
+                .set("classes", Arrays.stream(this.classes).map(FeatureClass::toSave).toArray());
     }
 }
